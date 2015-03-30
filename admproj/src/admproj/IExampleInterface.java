@@ -4,9 +4,10 @@
 package admproj;
 
 /**
- * @author Dustin
+ * @author Dustin Kempton
+ * @version 1
  *
  */
-public interface ITestInterface {
+public interface IExampleInterface {
 	public void firstMethod(String input);
 }
