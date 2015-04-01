@@ -1,5 +1,9 @@
 package dbconnect;
 
+import java.util.concurrent.FutureTask;
+
+import datatypes.IWindowSet;
+
 public interface IDbCon {
-	public boolean selectStuff();
+	public FutureTask<IWindowSet>[] getWindows();
 }

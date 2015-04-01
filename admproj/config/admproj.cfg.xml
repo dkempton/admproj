@@ -1,0 +1,14 @@
+<?xml version = "1.0"?> 
+<configfile>
+	<poolname value="pool-ds" />
+	<description value="Pooling Datasource" />
+	<ideltimeout value="650" />
+	<minpool value="2" />
+	<maxpool value="10" />
+	<maxsize value="40" />
+	<username value="admuser" />
+	<password value="admuser" />
+	<validationquery value="Do 1;" />
+	<driverclass value="com.mysql.jdbc.Driver" />
+	<url value="jdbc:mysql://dkempton1.ddns.net:1034/dmdata" />
+</configfile>

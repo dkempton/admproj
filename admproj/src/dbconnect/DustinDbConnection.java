@@ -2,45 +2,38 @@ package dbconnect;
 
 import snaq.db.DBPoolDataSource;
 
-import java.io.*;
 import java.sql.*;
+import java.util.concurrent.FutureTask;
+
+import datatypes.IWindowSet;
 
 public class DustinDbConnection implements IDbCon {
 	DBPoolDataSource dsourc;
-	PrintWriter wrtr;
-	File fl;
-	public DustinDbConnection(){
-		dsourc = new DBPoolDataSource();
-		dsourc.setName("pool-ds");
-		dsourc.setDescription("Pooling DataSource");
-		dsourc.setIdleTimeout(650);
-		dsourc.setMinPool(2);
-		dsourc.setMaxPool(10);
-		dsourc.setMaxSize(40);
-		dsourc.setUser("admuser");
-		dsourc.setPassword("admuser");
-		dsourc.setValidationQuery("Select count(*) from wavelengths;");
-		dsourc.setDriverClassName("com.mysql.jdbc.Driver");
-		dsourc.setUrl("jdbc:mysql://dkempton1.ddns.net:1034/dmdata");
+
+	public DustinDbConnection(DBPoolDataSource dsourc) {
+		this.dsourc = dsourc;
 	}
 
+
 	@Override
-	public boolean selectStuff() {
+	public FutureTask<IWindowSet>[] getWindows() {
+		// TODO Auto-generated method stub
 		try {
 			Connection con = dsourc.getConnection();
-			PreparedStatement prep = con.prepareStatement("Select count(*) from wavelengths");
+			PreparedStatement prep = con
+					.prepareStatement("Select count(*) from wavelengths");
 			ResultSet rs = prep.executeQuery();
-			while(rs.next()){
-				System.out.println("Num of Wavlength in table: "+rs.getInt(1));
+			while (rs.next()) {
+				System.out
+						.println("Num of Wavlength in table: " + rs.getInt(1));
 			}
+			
 			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
 		}
-		return true;
+		return null;
 	}
-	
-	
+
 }
