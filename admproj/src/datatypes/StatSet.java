@@ -3,8 +3,6 @@
  */
 package datatypes;
 
-import com.sun.istack.internal.NotNull;
-
 import datatypes.interfaces.IStatSet;
 
 /**
@@ -15,7 +13,8 @@ import datatypes.interfaces.IStatSet;
 public class StatSet implements IStatSet {
 	private double[] stats;
 
-	public StatSet(@NotNull double[] stats) {
+	public StatSet(double[] stats) {
+		assert stats != null;
 		this.stats = stats;
 	}
 
@@ -29,7 +28,7 @@ public class StatSet implements IStatSet {
 	 */
 	@Override
 	public double[] getAllStats() {
-		
+
 		return this.stats;
 	}
 

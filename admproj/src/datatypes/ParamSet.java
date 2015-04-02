@@ -3,8 +3,6 @@
  */
 package datatypes;
 
-import com.sun.istack.internal.NotNull;
-
 import datatypes.interfaces.IParamSet;
 import datatypes.interfaces.IStatSet;
 
@@ -15,20 +13,21 @@ import datatypes.interfaces.IStatSet;
  */
 public class ParamSet implements IParamSet {
 	private IStatSet[] paramStats;
-	
-	public ParamSet(@NotNull IStatSet[] paramStats){
+
+	public ParamSet(IStatSet[] paramStats) {
+		assert paramStats != null;
 		this.paramStats = paramStats;
 	}
 
 	@Override
 	public int size() {
-		
+
 		return this.paramStats.length;
 	}
 
 	@Override
 	public IStatSet[] getAllStatSets() {
-		
+
 		return this.paramStats;
 	}
 

@@ -3,8 +3,6 @@
  */
 package datatypes;
 
-import com.sun.istack.internal.NotNull;
-
 import datatypes.interfaces.IWavelengthSet;
 import datatypes.interfaces.IWindowSet;
 
@@ -15,7 +13,8 @@ import datatypes.interfaces.IWindowSet;
 public class WindowSet implements IWindowSet {
 	IWavelengthSet[] waveSets;
 
-	public WindowSet(@NotNull IWavelengthSet[] waveSets) {
+	public WindowSet(IWavelengthSet[] waveSets) {
+		assert waveSets != null;
 		this.waveSets = waveSets;
 	}
 

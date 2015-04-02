@@ -3,8 +3,6 @@
  */
 package datatypes;
 
-import com.sun.istack.internal.NotNull;
-
 import datatypes.interfaces.IParamSet;
 import datatypes.interfaces.IWavelengthSet;
 
@@ -15,7 +13,9 @@ import datatypes.interfaces.IWavelengthSet;
  */
 public class WavelengthSet implements IWavelengthSet {
 	IParamSet[] params;
-	public WavelengthSet(@NotNull IParamSet[] params){
+
+	public WavelengthSet(IParamSet[] params) {
+		assert params != null;
 		this.params = params;
 	}
 

@@ -109,8 +109,6 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 					// more were returned than we expect.
 					if (rowCount < this.pageOfWindowIds.length) {
 						this.pageOfWindowIds[rowCount] = rs.getInt(1);
-						System.out.println("Window ID: "
-								+ this.pageOfWindowIds[rowCount]);
 						rowCount++;
 					}
 				}
