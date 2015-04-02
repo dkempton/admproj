@@ -15,7 +15,7 @@ public class ParamSet implements IParamSet {
 	private IStatSet[] paramStats;
 
 	public ParamSet(IStatSet[] paramStats) {
-		assert paramStats != null;
+		assert paramStats != null : "IStatSet[] cannot be null in ParamSet constructor.";
 		this.paramStats = paramStats;
 	}
 

@@ -25,6 +25,11 @@ public class TestStatSet {
 		assertTrue(this.sSet.size()==3);
 	}
 	
+	@Test (expected = AssertionError.class)
+	public void testConstructorThrowsOnNull(){
+		IStatSet ss = new StatSet(null);
+	}
+	
 	@Test
 	public void testGetStat(){
 		assertTrue(this.sSet.getStat(0)==1);

@@ -80,6 +80,11 @@ public class TestWavlengthSet {
 	public void testSize() {
 		assertTrue(this.wSet.size() == 3);
 	}
+	
+	@Test (expected = AssertionError.class)
+	public void testConstructorThrowsOnNull(){
+		IWavelengthSet ws = new WavelengthSet(null);
+	}
 
 	@Test
 	public void testGetParamSet() {

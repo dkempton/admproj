@@ -100,12 +100,17 @@ public class TestWindowSet {
 		wavSets[0] = new FakeWavelenghtSet(1);
 		wavSets[1] = new FakeWavelenghtSet(2);
 		wavSets[2] = new FakeWavelenghtSet(3);
-		this.wSet = new WindowSet(wavSets);
+		this.wSet = new WindowSet(wavSets, 0);
 	}
 
 	@Test
 	public void testSize() {
 		assertTrue(this.wSet.size() == 3);
+	}
+
+	@Test(expected = AssertionError.class)
+	public void testConstructorThrowsOnNull() {
+		IWindowSet ws = new WindowSet(null, 0);
 	}
 
 	@Test
@@ -146,4 +151,8 @@ public class TestWindowSet {
 		assertTrue(statSet3.getStat(0) == 3);
 	}
 
+	@Test
+	public void testCalssMembership() {
+		assertTrue(this.wSet.memberOfClass() == 0);
+	}
 }
