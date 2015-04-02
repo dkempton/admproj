@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import datatypes.IParamSet;
-import datatypes.IStatSet;
-import datatypes.IWavelengthSet;
 import datatypes.WavelengthSet;
+import datatypes.interfaces.IParamSet;
+import datatypes.interfaces.IStatSet;
+import datatypes.interfaces.IWavelengthSet;
 
 public class TestWavlengthSet {
 

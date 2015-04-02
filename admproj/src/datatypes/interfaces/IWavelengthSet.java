@@ -1,7 +1,8 @@
 /**
  * 
  */
-package datatypes;
+package datatypes.interfaces;
+
 
 
 /**

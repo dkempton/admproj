@@ -5,11 +5,11 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import datatypes.IParamSet;
-import datatypes.IStatSet;
-import datatypes.IWavelengthSet;
-import datatypes.IWindowSet;
 import datatypes.WindowSet;
+import datatypes.interfaces.IParamSet;
+import datatypes.interfaces.IStatSet;
+import datatypes.interfaces.IWavelengthSet;
+import datatypes.interfaces.IWindowSet;
 
 public class TestWindowSet {
 

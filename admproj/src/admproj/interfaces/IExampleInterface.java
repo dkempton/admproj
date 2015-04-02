@@ -1,7 +1,7 @@
 /**
  * 
  */
-package admproj;
+package admproj.interfaces;
 
 /**
  * @author Dustin Kempton

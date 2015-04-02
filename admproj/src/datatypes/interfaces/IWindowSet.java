@@ -1,4 +1,5 @@
-package datatypes;
+package datatypes.interfaces;
+
 
 
 public interface IWindowSet {

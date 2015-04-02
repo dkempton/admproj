@@ -5,15 +5,20 @@ package admproj;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.concurrent.Callable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import datatypes.interfaces.IWindowSet;
 import dbconnect.DustinDbConnection;
-import dbconnect.IDbCon;
+import dbconnect.interfaces.IDbCon;
+import dbconnect.interfaces.IDbWindowSetResults;
+import exceptions.InvalidConfigException;
 
 import org.w3c.dom.*;
 
+import admproj.interfaces.IProjectFactory;
 import snaq.db.DBPoolDataSource;
 
 /**
@@ -62,6 +67,19 @@ public class ProjectFactory implements IProjectFactory {
 		return new DustinDbConnection(this.dbPoolSourc);
 	}
 
+	@Override
+	public IDbWindowSetResults getWindowResultSet() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Callable<IWindowSet> getWinSetCallable(int windowId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 	private void config() throws InvalidConfigException {
 		try {
 			DocumentBuilderFactory fctry = DocumentBuilderFactory.newInstance();
@@ -159,4 +177,5 @@ public class ProjectFactory implements IProjectFactory {
 			return buf.toString();
 		}
 	}
+
 }

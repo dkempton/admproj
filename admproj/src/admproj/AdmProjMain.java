@@ -1,6 +1,8 @@
 package admproj;
 
-import dbconnect.IDbCon;
+import admproj.interfaces.IProjectFactory;
+import dbconnect.interfaces.IDbCon;
+import exceptions.InvalidConfigException;
 
 public class AdmProjMain {
 

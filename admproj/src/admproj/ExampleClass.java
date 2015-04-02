@@ -1,4 +1,7 @@
 package admproj;
+
+import admproj.interfaces.IExampleInterface;
+
 /**
  * @author Dustin Kempton
  * @version 1

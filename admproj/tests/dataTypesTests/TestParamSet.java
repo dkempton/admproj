@@ -5,9 +5,9 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import datatypes.IStatSet;
-import datatypes.IParamSet;
 import datatypes.ParamSet;
+import datatypes.interfaces.IParamSet;
+import datatypes.interfaces.IStatSet;
 
 public class TestParamSet {
 

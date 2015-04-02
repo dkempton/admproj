@@ -5,6 +5,8 @@ package datatypes;
 
 import com.sun.istack.internal.NotNull;
 
+import datatypes.interfaces.IStatSet;
+
 /**
  * @author Dustin Kempton
  * @version 1.0

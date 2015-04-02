@@ -1,7 +1,7 @@
 /**
  * 
  */
-package datatypes;
+package datatypes.interfaces;
 
 /**
  * @author Dustin Kempton

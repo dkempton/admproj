@@ -5,6 +5,9 @@ package datatypes;
 
 import com.sun.istack.internal.NotNull;
 
+import datatypes.interfaces.IParamSet;
+import datatypes.interfaces.IWavelengthSet;
+
 /**
  * @author Dustin Kempton
  * @version 1.0

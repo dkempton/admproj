@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import datatypes.IStatSet;
 import datatypes.StatSet;
+import datatypes.interfaces.IStatSet;
 
 public class TestStatSet {
 	private IStatSet sSet;
