@@ -22,27 +22,27 @@ public class TestStatSet {
 
 	@Test
 	public void testSize() {
-		assertTrue(this.sSet.size()==3);
+		assertTrue(this.sSet.size() == 3);
 	}
-	
-	@Test (expected = AssertionError.class)
-	public void testConstructorThrowsOnNull(){
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorThrowsOnNull() {
 		IStatSet ss = new StatSet(null);
 	}
-	
+
 	@Test
-	public void testGetStat(){
-		assertTrue(this.sSet.getStat(0)==1);
-		assertTrue(this.sSet.getStat(1)==2);
-		assertTrue(this.sSet.getStat(2)==3);
+	public void testGetStat() {
+		assertTrue(this.sSet.getStat(0) == 1);
+		assertTrue(this.sSet.getStat(1) == 2);
+		assertTrue(this.sSet.getStat(2) == 3);
 	}
-	
+
 	@Test
-	public void testGetAll(){
+	public void testGetAll() {
 		double[] vals = this.sSet.getAllStats();
-		assertTrue(vals[0]==1);
-		assertTrue(vals[1]==2);
-		assertTrue(vals[2]==3);
+		assertTrue(vals[0] == 1);
+		assertTrue(vals[1] == 2);
+		assertTrue(vals[2] == 3);
 	}
 
 }

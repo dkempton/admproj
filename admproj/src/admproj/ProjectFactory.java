@@ -10,6 +10,9 @@ import java.util.concurrent.Callable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import datatypes.interfaces.IParamSet;
+import datatypes.interfaces.IStatSet;
+import datatypes.interfaces.IWavelengthSet;
 import datatypes.interfaces.IWindowSet;
 import dbconnect.DustinDbConnection;
 import dbconnect.interfaces.IDbCon;
@@ -64,7 +67,7 @@ public class ProjectFactory implements IProjectFactory {
 			this.dbPoolSourc.setUrl(this.url);
 		}
 
-		return new DustinDbConnection(this.dbPoolSourc);
+		return new DustinDbConnection(this.dbPoolSourc, this);
 	}
 
 	@Override
@@ -72,14 +75,13 @@ public class ProjectFactory implements IProjectFactory {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public Callable<IWindowSet> getWinSetCallable(int windowId) {
+	public Callable<IWindowSet> getWinSetCallable(int windowId, int classId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
+
 	private void config() throws InvalidConfigException {
 		try {
 			DocumentBuilderFactory fctry = DocumentBuilderFactory.newInstance();
@@ -94,10 +96,11 @@ public class ProjectFactory implements IProjectFactory {
 			NodeList ndLst = root.getChildNodes();
 			this.getElms(ndLst);
 
-/*			String logLoc = System.getProperty("user.dir") + File.separator
-					+ "admproj.log";
-			this.wrtr = new PrintWriter(new File(logLoc));*/
-			//this.dbPoolSourc.setLogWriter(wrtr);
+			/*
+			 * String logLoc = System.getProperty("user.dir") + File.separator +
+			 * "admproj.log"; this.wrtr = new PrintWriter(new File(logLoc));
+			 */
+			// this.dbPoolSourc.setLogWriter(wrtr);
 		} catch (Exception e) {
 			throw new InvalidConfigException(e.getMessage());
 		}
@@ -176,6 +179,30 @@ public class ProjectFactory implements IProjectFactory {
 		} else {
 			return buf.toString();
 		}
+	}
+
+	@Override
+	public IStatSet getStatSet(double[] stats) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IParamSet getParamSet(IStatSet[] statSets) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IWavelengthSet getWaveSet(IParamSet[] paramSets) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IWindowSet getWindowSet(IWavelengthSet[] waveSets) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

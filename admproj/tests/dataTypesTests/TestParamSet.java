@@ -9,7 +9,6 @@ import datatypes.ParamSet;
 import datatypes.interfaces.IParamSet;
 import datatypes.interfaces.IStatSet;
 
-
 public class TestParamSet {
 
 	private class FakeStatSet implements IStatSet {
@@ -53,9 +52,9 @@ public class TestParamSet {
 	public void testSize() {
 		assertTrue(this.pSet.size() == 3);
 	}
-	
-	@Test (expected = AssertionError.class)
-	public void testConstructorThrowsOnNull(){
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorThrowsOnNull() {
 		IParamSet prm = new ParamSet(null);
 	}
 

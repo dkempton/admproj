@@ -14,7 +14,9 @@ public class StatSet implements IStatSet {
 	private double[] stats;
 
 	public StatSet(double[] stats) {
-		assert stats != null : "stats cannot be null in StatSet constructor.";
+		if (stats == null)
+			throw new IllegalArgumentException(
+					"stats cannot be null in StatSet constructor.");
 		this.stats = stats;
 	}
 

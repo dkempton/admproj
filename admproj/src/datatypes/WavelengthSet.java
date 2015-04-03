@@ -15,7 +15,9 @@ public class WavelengthSet implements IWavelengthSet {
 	IParamSet[] params;
 
 	public WavelengthSet(IParamSet[] params) {
-		assert params != null : "IParamSet[] params cannot be null in WavelenghtSet constructor.";
+		if (params == null)
+			throw new IllegalArgumentException(
+					"IParamSet[] params cannot be null in WavelenghtSet constructor.");
 		this.params = params;
 	}
 

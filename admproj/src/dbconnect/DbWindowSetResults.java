@@ -23,7 +23,8 @@ import admproj.interfaces.IProjectFactory;
 public class DbWindowSetResults implements IDbWindowSetResults {
 	private DataSource dsourc;
 	IProjectFactory factory;
-	private int[] pageOfWindowIds;
+	private int[][] pageOfWindowIds;
+
 	private int pageSize;
 	private int currentPageSize;
 	private AtomicInteger currentIdx;
@@ -34,14 +35,22 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 	public DbWindowSetResults(DataSource dsourc, IProjectFactory factory,
 			int pageSize, long locTimeout) throws SQLException,
 			InterruptedException {
+		if (dsourc == null)
+			throw new IllegalArgumentException(
+					"DataSource cannot be null in DbWindowSetResults constructor.");
+		if (factory == null)
+			throw new IllegalArgumentException(
+					"IProjectFactory cannot be null in DbWindowSetResults constructor.");
+
 		this.dsourc = dsourc;
 		this.factory = factory;
 		this.pageSize = pageSize;
 		this.locTimeout = locTimeout;
+
 		this.loc = new ReentrantLock();
 		this.currentIdx = new AtomicInteger();
 		this.offset = 0;
-		this.pageOfWindowIds = new int[this.pageSize];
+		this.pageOfWindowIds = new int[this.pageSize][2];
 		this.getNewPageOfIds();
 	}
 
@@ -67,12 +76,13 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 			try {
 				if (this.loc.tryLock(this.locTimeout, TimeUnit.SECONDS)) {
 					// get the id of the window to return a future task to
-					int winId = this.pageOfWindowIds[this.currentIdx
-							.getAndIncrement()];
+					int winId = this.pageOfWindowIds[this.currentIdx.get()][0];
+					int clsId = this.pageOfWindowIds[this.currentIdx
+							.getAndIncrement()][1];
 					this.loc.unlock();
 					// now return a future task for this window id.
 					return new FutureTask<IWindowSet>(
-							this.factory.getWinSetCallable(winId));
+							this.factory.getWinSetCallable(winId, clsId));
 				}
 				return this.getNextWindow();
 			} catch (InterruptedException e) {
@@ -94,9 +104,10 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 				con = this.dsourc.getConnection();
 
 				PreparedStatement prep = con
-						.prepareStatement("SELECT Window_ID FROM events_before_flare"
-								+ " GROUP BY Window_ID ORDER BY Window_ID LIMIT ?,?;");
-				
+						.prepareStatement("SELECT Window_ID, intersects_flare FROM events_before_flare "
+								+ "INNER JOIN ar_track ON events_before_flare.track_id = ar_track.track_id "
+								+ "GROUP BY Window_ID ORDER BY Window_ID LIMIT ?,?;");
+
 				prep.setInt(1, this.offset);
 				prep.setInt(2, this.pageSize);
 
@@ -108,7 +119,8 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 					// just make sure we don't go out of bounds because
 					// more were returned than we expect.
 					if (rowCount < this.pageOfWindowIds.length) {
-						this.pageOfWindowIds[rowCount] = rs.getInt(1);
+						this.pageOfWindowIds[rowCount][0] = rs.getInt(1);
+						this.pageOfWindowIds[rowCount][1] = rs.getInt(2);
 						rowCount++;
 					}
 				}
@@ -119,7 +131,7 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 				this.currentPageSize = rowCount;
 
 				this.loc.unlock();
-				
+
 				con.close();
 				if (rowCount > 0) {
 					return true;

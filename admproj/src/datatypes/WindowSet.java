@@ -15,7 +15,9 @@ public class WindowSet implements IWindowSet {
 	int classMembership;
 
 	public WindowSet(IWavelengthSet[] waveSets, int classMembership) {
-		assert waveSets != null : "IWavelenghtSet[] waveSets cannot be null in WindowSet constructor";
+		if (waveSets == null)
+			throw new IllegalArgumentException(
+					"IWavelenghtSet[] waveSets cannot be null in WindowSet constructor");
 		this.waveSets = waveSets;
 		this.classMembership = classMembership;
 	}

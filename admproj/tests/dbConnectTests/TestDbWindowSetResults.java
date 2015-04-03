@@ -11,7 +11,6 @@ import java.util.concurrent.FutureTask;
 import javax.sql.DataSource;
 
 import org.easymock.EasyMock;
-
 import org.junit.Test;
 
 import com.mysql.jdbc.Connection;
@@ -23,6 +22,29 @@ import dbconnect.DbWindowSetResults;
 import exceptions.DbConException;
 
 public class TestDbWindowSetResults {
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorThrowsOnNullDbConnection() {
+		IProjectFactory factory = createMock(IProjectFactory.class);
+		try {
+			DbWindowSetResults rs = new DbWindowSetResults(null, factory, 1, 45);
+		} catch (SQLException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorThrowsOnNullProjectFactory() {
+
+		DataSource dsourc = createMock(DataSource.class);
+		try {
+			DbWindowSetResults rs = new DbWindowSetResults(dsourc, null, 1, 45);
+		} catch (SQLException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	public void testHasNextOnLoad() {
@@ -37,6 +59,7 @@ public class TestDbWindowSetResults {
 
 			// the int value to return
 			expect(rset.getInt(1)).andReturn(1);
+			expect(rset.getInt(2)).andReturn(2);
 
 			// statement to return from connection
 			PreparedStatement stmt = createMock(PreparedStatement.class);
@@ -134,6 +157,7 @@ public class TestDbWindowSetResults {
 
 			// the int value to return
 			expect(rset.getInt(1)).andReturn(1);
+			expect(rset.getInt(2)).andReturn(2);
 
 			// statement to return from connection
 			PreparedStatement stmt = createMock(PreparedStatement.class);
@@ -156,7 +180,7 @@ public class TestDbWindowSetResults {
 
 			// factory to pass into the class under test
 			IProjectFactory factory = createMock(IProjectFactory.class);
-			expect(factory.getWinSetCallable(anyInt())).andReturn(
+			expect(factory.getWinSetCallable(1, 2)).andReturn(
 					(Callable<IWindowSet>) wset);
 
 			replay(dsourc);
@@ -198,6 +222,7 @@ public class TestDbWindowSetResults {
 
 			// the int value to return
 			expect(rset.getInt(1)).andReturn(1);
+			expect(rset.getInt(2)).andReturn(2);
 
 			// statement to return from connection
 			PreparedStatement stmt = createMock(PreparedStatement.class);
@@ -221,7 +246,7 @@ public class TestDbWindowSetResults {
 
 			// factory to pass into the class under test
 			IProjectFactory factory = createMock(IProjectFactory.class);
-			expect(factory.getWinSetCallable(anyInt())).andReturn(
+			expect(factory.getWinSetCallable(anyInt(), anyInt())).andReturn(
 					(Callable<IWindowSet>) wset);
 
 			replay(dsourc);
@@ -260,6 +285,7 @@ public class TestDbWindowSetResults {
 
 			// the int value to return
 			expect(rset.getInt(1)).andReturn(1);
+			expect(rset.getInt(2)).andReturn(1);
 
 			// statement to return from connection
 			PreparedStatement stmt = createMock(PreparedStatement.class);
@@ -283,7 +309,7 @@ public class TestDbWindowSetResults {
 
 			// factory to pass into the class under test
 			IProjectFactory factory = createMock(IProjectFactory.class);
-			expect(factory.getWinSetCallable(anyInt())).andReturn(
+			expect(factory.getWinSetCallable(anyInt(), anyInt())).andReturn(
 					(Callable<IWindowSet>) wset);
 
 			replay(dsourc);

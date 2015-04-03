@@ -81,7 +81,7 @@ public class TestWavlengthSet {
 		assertTrue(this.wSet.size() == 3);
 	}
 	
-	@Test (expected = AssertionError.class)
+	@Test (expected = IllegalArgumentException.class)
 	public void testConstructorThrowsOnNull(){
 		IWavelengthSet ws = new WavelengthSet(null);
 	}

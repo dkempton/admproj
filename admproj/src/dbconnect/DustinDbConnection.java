@@ -1,47 +1,45 @@
 package dbconnect;
 
-import snaq.db.DBPoolDataSource;
-
-import java.sql.*;
 import java.util.concurrent.FutureTask;
 
+import javax.sql.DataSource;
+
+import admproj.interfaces.IProjectFactory;
 import dbconnect.interfaces.IDbCon;
 import dbconnect.interfaces.IDbWindowSetResults;
 
-
 public class DustinDbConnection implements IDbCon {
-	DBPoolDataSource dsourc;
+	DataSource dsourc;
+	IProjectFactory factory;
 
-	public DustinDbConnection(DBPoolDataSource dsourc) {
+	public DustinDbConnection(DataSource dsourc, IProjectFactory factory) {
+		if (dsourc == null)
+			throw new IllegalArgumentException(
+					"DataSource cannot be null in DustinDbConneciton constructor.");
+		if (factory == null)
+			throw new IllegalArgumentException(
+					"IProjectFactory cannot be null in DustinDbConnection constructor.");
+
 		this.dsourc = dsourc;
+		this.factory = factory;
 	}
-
 
 	@Override
 	public IDbWindowSetResults getWindows() {
-		// TODO Auto-generated method stub
-		try {
-			Connection con = dsourc.getConnection();
-			PreparedStatement prep = con
-					.prepareStatement("Select count(*) from ar_track");
-			ResultSet rs = prep.executeQuery();
-			while (rs.next()) {
-				System.out
-						.println("Num of Tracks in table: " + rs.getInt(1));
-			}
-			
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		return this.factory.getWindowResultSet();
 	}
-
 
 	@Override
 	public FutureTask<Boolean> saveTransformToDb() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int[] getWavelenghts() {
+		return null;
+	}
+
+	public int[] getParams() {
 		return null;
 	}
 

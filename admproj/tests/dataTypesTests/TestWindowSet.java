@@ -108,7 +108,12 @@ public class TestWindowSet {
 		assertTrue(this.wSet.size() == 3);
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test
+	public void testMemberOfClass() {
+		assertTrue(this.wSet.memberOfClass() == 0);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void testConstructorThrowsOnNull() {
 		IWindowSet ws = new WindowSet(null, 0);
 	}
