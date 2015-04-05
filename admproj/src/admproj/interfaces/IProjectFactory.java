@@ -20,12 +20,15 @@ public interface IProjectFactory {
 	public IDbCon getDbCon();
 
 	public IDbWindowSetResults getWindowResultSet();
-	
+
 	public IStatSet getStatSet(double[] stats);
+
 	public IParamSet getParamSet(IStatSet[] statSets);
+
 	public IWavelengthSet getWaveSet(IParamSet[] paramSets);
-	public IWindowSet getWindowSet(IWavelengthSet[] waveSets);
-	
+
+	public IWindowSet getWindowSet(IWavelengthSet[] waveSets, int classId,
+			int windowId);
 
 	public Callable<IWindowSet> getWinSetCallable(int windowId, int classId);
 }

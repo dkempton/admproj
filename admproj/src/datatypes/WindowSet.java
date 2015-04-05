@@ -13,13 +13,16 @@ import datatypes.interfaces.IWindowSet;
 public class WindowSet implements IWindowSet {
 	IWavelengthSet[] waveSets;
 	int classMembership;
+	int windowId;
 
-	public WindowSet(IWavelengthSet[] waveSets, int classMembership) {
+	public WindowSet(IWavelengthSet[] waveSets, int classMembership,
+			int windowId) {
 		if (waveSets == null)
 			throw new IllegalArgumentException(
 					"IWavelenghtSet[] waveSets cannot be null in WindowSet constructor");
 		this.waveSets = waveSets;
 		this.classMembership = classMembership;
+		this.windowId = windowId;
 	}
 
 	@Override
@@ -40,5 +43,10 @@ public class WindowSet implements IWindowSet {
 	@Override
 	public int memberOfClass() {
 		return this.classMembership;
+	}
+
+	@Override
+	public int getWindowId() {
+		return this.windowId;
 	}
 }

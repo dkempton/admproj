@@ -200,7 +200,8 @@ public class ProjectFactory implements IProjectFactory {
 	}
 
 	@Override
-	public IWindowSet getWindowSet(IWavelengthSet[] waveSets) {
+	public IWindowSet getWindowSet(IWavelengthSet[] waveSets, int classId,
+			int windowId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

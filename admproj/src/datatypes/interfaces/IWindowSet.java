@@ -7,4 +7,5 @@ public interface IWindowSet {
 	public IWavelengthSet[] getAllWavelengthSets();
 	public IWavelengthSet getWavlengthSet(int waveId);
 	public int memberOfClass();
+	public int getWindowId();
 }

@@ -101,8 +101,9 @@ public class CallableWindowFetch implements Callable<IWindowSet> {
 			}
 			con.close();
 
-			return this.factory.getWindowSet((IWavelengthSet[]) waveSets
-					.toArray());
+			return this.factory.getWindowSet(
+					(IWavelengthSet[]) waveSets.toArray(), this.classId,
+					this.windowId);
 		} catch (SQLException e) {
 
 			if (con != null) {
