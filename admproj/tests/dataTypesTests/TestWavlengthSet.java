@@ -12,7 +12,7 @@ import datatypes.interfaces.IWavelengthSet;
 
 public class TestWavlengthSet {
 
-		private class FakeParamSet implements IParamSet {
+	private class FakeParamSet implements IParamSet {
 
 		private class FakeStatSet implements IStatSet {
 			int iVal;
@@ -63,6 +63,12 @@ public class TestWavlengthSet {
 			return new FakeStatSet(this.val);
 		}
 
+		@Override
+		public int getParamId() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
 	}
 
 	IWavelengthSet wSet;
@@ -73,17 +79,17 @@ public class TestWavlengthSet {
 		parms[0] = new FakeParamSet(1);
 		parms[1] = new FakeParamSet(2);
 		parms[2] = new FakeParamSet(3);
-		this.wSet = new WavelengthSet(parms);
+		this.wSet = new WavelengthSet(parms, 1);
 	}
 
 	@Test
 	public void testSize() {
 		assertTrue(this.wSet.size() == 3);
 	}
-	
-	@Test (expected = IllegalArgumentException.class)
-	public void testConstructorThrowsOnNull(){
-		IWavelengthSet ws = new WavelengthSet(null);
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorThrowsOnNull() {
+		IWavelengthSet ws = new WavelengthSet(null, 1);
 	}
 
 	@Test
@@ -112,4 +118,8 @@ public class TestWavlengthSet {
 		assertTrue(p3.getStatSet(0).getStat(0) == 3);
 	}
 
+	@Test
+	public void testGetWaveId() {
+		assertTrue(this.wSet.getWaveId() == 1);
+	}
 }

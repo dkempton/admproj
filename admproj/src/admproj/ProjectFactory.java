@@ -5,15 +5,22 @@ package admproj;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import datatypes.ParamSet;
+import datatypes.StatSet;
+import datatypes.WavelengthSet;
+import datatypes.WindowSet;
 import datatypes.interfaces.IParamSet;
 import datatypes.interfaces.IStatSet;
 import datatypes.interfaces.IWavelengthSet;
 import datatypes.interfaces.IWindowSet;
+import dbconnect.CallableWindowFetch;
+import dbconnect.DbWindowSetResults;
 import dbconnect.DustinDbConnection;
 import dbconnect.interfaces.IDbCon;
 import dbconnect.interfaces.IDbWindowSetResults;
@@ -41,6 +48,11 @@ public class ProjectFactory implements IProjectFactory {
 	String valQuery;
 	String driverClass;
 	String url;
+
+	// Settings for dataset retrieval
+	int pageSize;
+	int wavelengths[];
+	int params[];
 
 	// for dbpool logging
 	PrintWriter wrtr;
@@ -71,15 +83,37 @@ public class ProjectFactory implements IProjectFactory {
 	}
 
 	@Override
-	public IDbWindowSetResults getWindowResultSet() {
-		// TODO Auto-generated method stub
-		return null;
+	public IDbWindowSetResults getWindowResultSet() throws SQLException,
+			InterruptedException {
+		return new DbWindowSetResults(this.dbPoolSourc, this, this.pageSize,
+				this.poolIdleTime);
 	}
 
 	@Override
 	public Callable<IWindowSet> getWinSetCallable(int windowId, int classId) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CallableWindowFetch(this.dbPoolSourc, this,
+				this.wavelengths, this.params, windowId, classId);
+	}
+
+	@Override
+	public IStatSet getStatSet(double[] stats) {
+		return new StatSet(stats);
+	}
+
+	@Override
+	public IParamSet getParamSet(IStatSet[] statSets, int paramId) {
+		return new ParamSet(statSets, paramId);
+	}
+
+	@Override
+	public IWavelengthSet getWaveSet(IParamSet[] paramSets, int waveId) {
+		return new WavelengthSet(paramSets, waveId);
+	}
+
+	@Override
+	public IWindowSet getWindowSet(IWavelengthSet[] waveSets, int classId,
+			int windowId) {
+		return new WindowSet(waveSets, classId, windowId);
 	}
 
 	private void config() throws InvalidConfigException {
@@ -151,6 +185,30 @@ public class ProjectFactory implements IProjectFactory {
 				case "url":
 					this.url = this.getAttrib(nde, "value");
 					break;
+				case "pagesize":
+					String pgStr = this.getAttrib(nde, "value");
+					this.pageSize = Integer.parseInt(pgStr);
+					break;
+				case "wavelengthrange":
+					String wvMinStr = this.getAttrib(nde, "min");
+					String wvMaxStr = this.getAttrib(nde, "max");
+					int wvMin = Integer.parseInt(wvMinStr);
+					int wvMax = Integer.parseInt(wvMaxStr);
+					this.wavelengths = new int[wvMax - wvMin + 1];
+					for (int k = wvMin; k <= wvMax; k++) {
+						this.wavelengths[k - wvMin] = k;
+					}
+					break;
+				case "paramrange":
+					String parmMinStr = this.getAttrib(nde, "min");
+					String parmMaxStr = this.getAttrib(nde, "max");
+					int parmMin = Integer.parseInt(parmMinStr);
+					int parmMax = Integer.parseInt(parmMaxStr);
+					this.wavelengths = new int[parmMax - parmMin + 1];
+					for (int k = parmMin; k <= parmMax; k++) {
+						this.wavelengths[k - parmMin] = k;
+					}
+					break;
 				default:
 					System.out.print("Unknown Element in admproj.cfg.xml: ");
 					System.out.println(ndName);
@@ -179,31 +237,6 @@ public class ProjectFactory implements IProjectFactory {
 		} else {
 			return buf.toString();
 		}
-	}
-
-	@Override
-	public IStatSet getStatSet(double[] stats) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IParamSet getParamSet(IStatSet[] statSets) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IWavelengthSet getWaveSet(IParamSet[] paramSets) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IWindowSet getWindowSet(IWavelengthSet[] waveSets, int classId,
-			int windowId) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

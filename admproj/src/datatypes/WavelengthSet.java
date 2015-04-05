@@ -13,12 +13,14 @@ import datatypes.interfaces.IWavelengthSet;
  */
 public class WavelengthSet implements IWavelengthSet {
 	IParamSet[] params;
+	int waveId;
 
-	public WavelengthSet(IParamSet[] params) {
+	public WavelengthSet(IParamSet[] params, int waveId) {
 		if (params == null)
 			throw new IllegalArgumentException(
 					"IParamSet[] params cannot be null in WavelenghtSet constructor.");
 		this.params = params;
+		this.waveId = waveId;
 	}
 
 	@Override
@@ -36,4 +38,8 @@ public class WavelengthSet implements IWavelengthSet {
 		return this.params[idx];
 	}
 
+	@Override
+	public int getWaveId() {
+		return this.waveId;
+	}
 }

@@ -1,5 +1,6 @@
 package dbconnect;
 
+import java.sql.SQLException;
 import java.util.concurrent.FutureTask;
 
 import javax.sql.DataSource;
@@ -26,7 +27,12 @@ public class DustinDbConnection implements IDbCon {
 
 	@Override
 	public IDbWindowSetResults getWindows() {
-		return this.factory.getWindowResultSet();
+		try {
+			return this.factory.getWindowResultSet();
+		} catch (SQLException | InterruptedException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
@@ -35,12 +41,10 @@ public class DustinDbConnection implements IDbCon {
 		return null;
 	}
 
-	public int[] getWavelenghts() {
-		return null;
-	}
-
-	public int[] getParams() {
-		return null;
-	}
+	/*
+	 * public int[] getWavelenghts() { return null; }
+	 * 
+	 * public int[] getParams() { return null; }
+	 */
 
 }

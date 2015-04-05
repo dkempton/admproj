@@ -104,9 +104,8 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 				con = this.dsourc.getConnection();
 
 				PreparedStatement prep = con
-						.prepareStatement("SELECT Window_ID, intersects_flare FROM events_before_flare "
-								+ "INNER JOIN ar_track ON events_before_flare.track_id = ar_track.track_id "
-								+ "GROUP BY Window_ID ORDER BY Window_ID LIMIT ?,?;");
+						.prepareStatement("SELECT window_id, class_id  FROM combined_windows "
+								+ "GROUP BY window_id ORDER BY window_id LIMIT ?,?;");
 
 				prep.setInt(1, this.offset);
 				prep.setInt(2, this.pageSize);

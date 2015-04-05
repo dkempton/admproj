@@ -29,12 +29,10 @@ public class CallableWindowFetch implements Callable<IWindowSet> {
 	int classId;
 
 	String joinQueryString = "SELECT mean, median, std_dev, min, max "
-			+ "FROM interpolated_ar_event_params JOIN events_before_flare "
-			+ "ON events_before_flare.event_id = interpolated_ar_event_params.ar_event_id "
-			+ "WHERE events_before_flare.Window_ID = ? AND "
-			+ "interpolated_ar_event_params.wavelength_id = ? AND "
-			+ "interpolated_ar_event_params.img_param_id = ? "
-			+ "ORDER BY events_before_flare.start_time ASC;";
+			+ "FROM interpolated_ar_event_params parms INNER JOIN combined_windows wins "
+			+ "ON parms.ar_event_id = wins.event_id "
+			+ "WHERE wins.window_id = ? AND " + "parms.wavelength_id = ? AND "
+			+ "parms.img_param_id = ? " + "ORDER BY wins.start_time ASC;";
 
 	public CallableWindowFetch(DataSource dsourc, IProjectFactory factory,
 			int[] wavelenghts, int[] params, int windowId, int classId) {
@@ -93,11 +91,11 @@ public class CallableWindowFetch implements Callable<IWindowSet> {
 						paramsStats[4] = paramsResults.getDouble(5);
 						statSets.add(this.factory.getStatSet(paramsStats));
 					}
-					paramSets.add(this.factory
-							.getParamSet((IStatSet[]) statSets.toArray()));
+					paramSets.add(this.factory.getParamSet(
+							(IStatSet[]) statSets.toArray(), this.params[j]));
 				}
-				waveSets.add(this.factory.getWaveSet((IParamSet[]) paramSets
-						.toArray()));
+				waveSets.add(this.factory.getWaveSet(
+						(IParamSet[]) paramSets.toArray(), this.wavelenghts[i]));
 			}
 			con.close();
 

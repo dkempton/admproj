@@ -13,12 +13,14 @@ import datatypes.interfaces.IStatSet;
  */
 public class ParamSet implements IParamSet {
 	private IStatSet[] paramStats;
+	int paramId;
 
-	public ParamSet(IStatSet[] paramStats) {
+	public ParamSet(IStatSet[] paramStats, int paramId) {
 		if (paramStats == null)
 			throw new IllegalArgumentException(
 					"IStatSet[] cannot be null in ParamSet constructor.");
 		this.paramStats = paramStats;
+		this.paramId = paramId;
 	}
 
 	@Override
@@ -36,6 +38,11 @@ public class ParamSet implements IParamSet {
 	@Override
 	public IStatSet getStatSet(int idx) {
 		return this.paramStats[idx];
+	}
+
+	@Override
+	public int getParamId() {
+		return this.paramId;
 	}
 
 }

@@ -1,4 +1,4 @@
-<?xml version = "1.0"?> 
+<?xml version = "1.0"?>
 <configfile>
 	<poolname value="pool-ds" />
 	<description value="Pooling Datasource" />
@@ -11,4 +11,7 @@
 	<validationquery value="Do 1;" />
 	<driverclass value="com.mysql.jdbc.Driver" />
 	<url value="jdbc:mysql://dkempton1.ddns.net:1034/dmdata" />
+	<pagesize value="1000" />
+	<wavelengthrange min="1" max="9" />
+	<paramrange min="1" max="10" />
 </configfile>

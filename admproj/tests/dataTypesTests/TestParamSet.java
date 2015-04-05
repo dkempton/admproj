@@ -45,7 +45,7 @@ public class TestParamSet {
 		stats[0] = new FakeStatSet(1);
 		stats[1] = new FakeStatSet(2);
 		stats[2] = new FakeStatSet(3);
-		this.pSet = new ParamSet(stats);
+		this.pSet = new ParamSet(stats, 1);
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class TestParamSet {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testConstructorThrowsOnNull() {
-		IParamSet prm = new ParamSet(null);
+		IParamSet prm = new ParamSet(null, 1);
 	}
 
 	@Test
@@ -71,6 +71,11 @@ public class TestParamSet {
 		assertTrue(stats[0].getStat(0) == 1);
 		assertTrue(stats[1].getStat(0) == 2);
 		assertTrue(stats[2].getStat(0) == 3);
+	}
+
+	@Test
+	public void testGetParamId() {
+		assertTrue(this.pSet.getParamId() == 1);
 	}
 
 }

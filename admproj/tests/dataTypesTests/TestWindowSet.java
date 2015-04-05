@@ -65,6 +65,12 @@ public class TestWindowSet {
 				return new FakeStatSet(this.val);
 			}
 
+			@Override
+			public int getParamId() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
 		}
 
 		private int val;
@@ -88,6 +94,12 @@ public class TestWindowSet {
 		@Override
 		public IParamSet getParamSet(int idx) {
 			return new FakeParamSet(this.val);
+		}
+
+		@Override
+		public int getWaveId() {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 
 	}

@@ -50,17 +50,19 @@ public class Transform implements ITransform {
 				IParamSet param = waveLengthSet.getParamSet(paramIndex);
 				double[][] convertedParamMatrix = convertParamSetToDoubleMatrix(param);
 				double[][] transformedParamMatrix = transformConvertedParamStat(convertedParamMatrix);
-				IParamSet transformedParam = convertDoubleMatrixToParamSet(transformedParamMatrix);
+				IParamSet transformedParam = convertDoubleMatrixToParamSet(
+						transformedParamMatrix, param.getParamId());
 				paramSetArray[paramIndex] = transformedParam;
 			}
-			transformedSets[waveId] = this.factory.getWaveSet(paramSetArray);
+			transformedSets[waveId] = this.factory.getWaveSet(paramSetArray,
+					waveLengthSet.getWaveId());
 		}
 		return this.factory.getWindowSet(transformedSets,
 				original.memberOfClass(), original.getWindowId());
 	}
 
 	private double[][] convertParamSetToDoubleMatrix(IParamSet paramSet) {
-		assert paramSet != null : "paramSet cannot be null";
+
 		IStatSet indicatorStatSet = paramSet.getStatSet(0);
 		int numberOfStats = indicatorStatSet.size();
 		int lengthOfTrack = paramSet.size();
@@ -88,7 +90,8 @@ public class Transform implements ITransform {
 		return transformedParamSet;
 	}
 
-	private IParamSet convertDoubleMatrixToParamSet(double[][] convertedParamSet) {
+	private IParamSet convertDoubleMatrixToParamSet(
+			double[][] convertedParamSet, int paramId) {
 		int numberOfStats = convertedParamSet.length;
 		int length = convertedParamSet[0].length;
 		IStatSet[] statSets = new IStatSet[length];
@@ -99,6 +102,6 @@ public class Transform implements ITransform {
 			}
 			statSets[index] = this.factory.getStatSet(stats);
 		}
-		return this.factory.getParamSet(statSets);
+		return this.factory.getParamSet(statSets, paramId);
 	}
 }
