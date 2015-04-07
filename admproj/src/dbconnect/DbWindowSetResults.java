@@ -135,6 +135,7 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 
 				con.close();
 				if (rowCount > 0) {
+					this.offset += this.pageSize;
 					return true;
 				} else {
 					return false;
