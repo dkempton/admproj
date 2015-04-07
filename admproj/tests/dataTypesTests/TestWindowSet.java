@@ -132,17 +132,17 @@ public class TestWindowSet {
 
 	@Test
 	public void testGetParamSet() {
-		IWavelengthSet wavSet1 = this.wSet.getWavlengthSet(0);
+		IWavelengthSet wavSet1 = this.wSet.getWavelengthSet(0);
 		IParamSet parmSet1 = wavSet1.getParamSet(0);
 		IStatSet statSet1 = parmSet1.getStatSet(0);
 		assertTrue(statSet1.getStat(0) == 1);
 
-		IWavelengthSet wavSet2 = this.wSet.getWavlengthSet(1);
+		IWavelengthSet wavSet2 = this.wSet.getWavelengthSet(1);
 		IParamSet parmSet2 = wavSet2.getParamSet(0);
 		IStatSet statSet2 = parmSet2.getStatSet(0);
 		assertTrue(statSet2.getStat(0) == 2);
 
-		IWavelengthSet wavSet3 = this.wSet.getWavlengthSet(2);
+		IWavelengthSet wavSet3 = this.wSet.getWavelengthSet(2);
 		IParamSet parmSet3 = wavSet3.getParamSet(0);
 		IStatSet statSet3 = parmSet3.getStatSet(0);
 		assertTrue(statSet3.getStat(0) == 3);

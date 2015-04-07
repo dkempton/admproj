@@ -36,7 +36,7 @@ public class WindowSet implements IWindowSet {
 	}
 
 	@Override
-	public IWavelengthSet getWavlengthSet(int waveId) {
+	public IWavelengthSet getWavelengthSet(int waveId) {
 		return this.waveSets[waveId];
 	}
 

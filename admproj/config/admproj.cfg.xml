@@ -14,4 +14,5 @@
 	<pagesize value="1000" />
 	<wavelengthrange min="1" max="9" />
 	<paramrange min="1" max="10" />
+	<transform name="DCT" />
 </configfile>

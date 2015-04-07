@@ -86,7 +86,6 @@ public class TestDbWindowSetResults {
 			DbWindowSetResults rs = new DbWindowSetResults(dsourc, factory, 1,
 					45);
 			boolean value = rs.hasNext();
-			System.out.print("The value of has next: " + value);
 			verify(dsourc);
 			verify(conn);
 			verify(stmt);
@@ -193,7 +192,7 @@ public class TestDbWindowSetResults {
 					45);
 
 			try {
-				FutureTask<IWindowSet> ftsk = rs.getNextWindow();
+				Callable<IWindowSet> ftsk = rs.getNextWindow();
 				verify(dsourc);
 				verify(conn);
 				verify(stmt);
@@ -259,7 +258,7 @@ public class TestDbWindowSetResults {
 					45);
 
 			try {
-				FutureTask<IWindowSet> ftsk = rs.getNextWindow();
+				Callable<IWindowSet> ftsk = rs.getNextWindow();
 				assertTrue(rs.hasNext() == false);
 			} catch (DbConException e) {
 				// TODO Auto-generated catch block
@@ -321,7 +320,7 @@ public class TestDbWindowSetResults {
 			DbWindowSetResults rs = new DbWindowSetResults(dsourc, factory, 1,
 					45);
 
-			FutureTask<IWindowSet> ftsk = rs.getNextWindow();
+			Callable<IWindowSet> ftsk = rs.getNextWindow();
 			rs.getNextWindow();
 
 		} catch (SQLException | InterruptedException e) {

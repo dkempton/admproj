@@ -6,22 +6,19 @@ import java.util.concurrent.FutureTask;
 import javax.sql.DataSource;
 
 import admproj.interfaces.IProjectFactory;
+import datatypes.interfaces.IWindowSet;
 import dbconnect.interfaces.IDbCon;
 import dbconnect.interfaces.IDbWindowSetResults;
 
-public class DustinDbConnection implements IDbCon {
+public class DbConnection implements IDbCon {
 	DataSource dsourc;
 	IProjectFactory factory;
 
-	public DustinDbConnection(DataSource dsourc, IProjectFactory factory) {
-		if (dsourc == null)
-			throw new IllegalArgumentException(
-					"DataSource cannot be null in DustinDbConneciton constructor.");
+	public DbConnection(IProjectFactory factory) {
 		if (factory == null)
 			throw new IllegalArgumentException(
 					"IProjectFactory cannot be null in DustinDbConnection constructor.");
 
-		this.dsourc = dsourc;
 		this.factory = factory;
 	}
 
@@ -36,15 +33,10 @@ public class DustinDbConnection implements IDbCon {
 	}
 
 	@Override
-	public FutureTask<Boolean> saveTransformToDb() {
-		// TODO Auto-generated method stub
-		return null;
+	public FutureTask<Boolean> saveTransformToDb(IWindowSet transformedSet) {
+		return new FutureTask<Boolean>(
+				this.factory.getTransformSaveCallable(transformedSet));
 	}
 
-	/*
-	 * public int[] getWavelenghts() { return null; }
-	 * 
-	 * public int[] getParams() { return null; }
-	 */
 
 }

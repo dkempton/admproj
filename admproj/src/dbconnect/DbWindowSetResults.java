@@ -10,6 +10,8 @@ import java.sql.*;
 
 import javax.sql.DataSource;
 
+import com.google.common.util.concurrent.ListenableFutureTask;
+
 import datatypes.interfaces.IWindowSet;
 import dbconnect.interfaces.IDbWindowSetResults;
 import exceptions.DbConException;
@@ -71,18 +73,17 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 	}
 
 	@Override
-	public FutureTask<IWindowSet> getNextWindow() throws DbConException {
+	public Callable<IWindowSet> getNextWindow() throws DbConException {
 		if (this.hasNext()) {
 			try {
 				if (this.loc.tryLock(this.locTimeout, TimeUnit.SECONDS)) {
 					// get the id of the window to return a future task to
-					int winId = this.pageOfWindowIds[this.currentIdx.get()][0];
-					int clsId = this.pageOfWindowIds[this.currentIdx
-							.getAndIncrement()][1];
+					int idxVal = this.currentIdx.getAndIncrement();
+					int winId = this.pageOfWindowIds[idxVal][0];
+					int clsId = this.pageOfWindowIds[idxVal][1];
 					this.loc.unlock();
 					// now return a future task for this window id.
-					return new FutureTask<IWindowSet>(
-							this.factory.getWinSetCallable(winId, clsId));
+					return this.factory.getWinSetCallable(winId, clsId);
 				}
 				return this.getNextWindow();
 			} catch (InterruptedException e) {
@@ -102,7 +103,7 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 				// get a connection from the db connection pool and
 				// prepare the statement.
 				con = this.dsourc.getConnection();
-
+				con.setAutoCommit(true);
 				PreparedStatement prep = con
 						.prepareStatement("SELECT window_id, class_id  FROM combined_windows "
 								+ "GROUP BY window_id ORDER BY window_id LIMIT ?,?;");

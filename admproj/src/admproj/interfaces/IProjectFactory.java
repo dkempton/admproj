@@ -6,6 +6,10 @@ package admproj.interfaces;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
+import admproj.WorkSupervisor;
+
+import com.google.common.util.concurrent.FutureCallback;
+
 import datatypes.interfaces.IParamSet;
 import datatypes.interfaces.IStatSet;
 import datatypes.interfaces.IWavelengthSet;
@@ -33,4 +37,14 @@ public interface IProjectFactory {
 			int windowId);
 
 	public Callable<IWindowSet> getWinSetCallable(int windowId, int classId);
+
+	public Callable<Boolean> getTransformSaveCallable(IWindowSet transformedSet);
+
+	public FutureCallback<IWindowSet> getWindowRetrievalCallBack();
+
+	public FutureCallback<IWindowSet> getTransformCallBack();
+
+	public Callable<IWindowSet> getTransformWinSetCallable(IWindowSet inputSet);
+
+	public WorkSupervisor getSuper();
 }

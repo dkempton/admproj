@@ -20,7 +20,7 @@ import datatypes.interfaces.IStatSet;
 import datatypes.interfaces.IWavelengthSet;
 import datatypes.interfaces.IWindowSet;
 
-public class CallableWindowFetch implements Callable<IWindowSet> {
+public class CallableWindowFetchDustinDb implements Callable<IWindowSet> {
 	DataSource dsourc;
 	IProjectFactory factory;
 	int[] wavelenghts;
@@ -34,8 +34,9 @@ public class CallableWindowFetch implements Callable<IWindowSet> {
 			+ "WHERE wins.window_id = ? AND " + "parms.wavelength_id = ? AND "
 			+ "parms.img_param_id = ? " + "ORDER BY wins.start_time ASC;";
 
-	public CallableWindowFetch(DataSource dsourc, IProjectFactory factory,
-			int[] wavelenghts, int[] params, int windowId, int classId) {
+	public CallableWindowFetchDustinDb(DataSource dsourc,
+			IProjectFactory factory, int[] wavelenghts, int[] params,
+			int windowId, int classId) {
 		if (dsourc == null)
 			throw new IllegalArgumentException(
 					"DataSource cannot be null in CallableWindowFetch constructor.");
@@ -66,6 +67,7 @@ public class CallableWindowFetch implements Callable<IWindowSet> {
 			// get a connection from the db connection pool and
 			// prepare the statement.
 			con = this.dsourc.getConnection();
+			con.setAutoCommit(true);
 
 			PreparedStatement getParamsStmt = con
 					.prepareStatement(this.joinQueryString);
@@ -82,7 +84,9 @@ public class CallableWindowFetch implements Callable<IWindowSet> {
 
 					// execute query and get the page of results.
 					ResultSet paramsResults = getParamsStmt.executeQuery();
+
 					while (paramsResults.next()) {
+
 						double[] paramsStats = new double[5];
 						paramsStats[0] = paramsResults.getDouble(1);
 						paramsStats[1] = paramsResults.getDouble(2);
@@ -91,23 +95,34 @@ public class CallableWindowFetch implements Callable<IWindowSet> {
 						paramsStats[4] = paramsResults.getDouble(5);
 						statSets.add(this.factory.getStatSet(paramsStats));
 					}
-					paramSets.add(this.factory.getParamSet(
-							(IStatSet[]) statSets.toArray(), this.params[j]));
+					// need to create an array to place the arraylist results
+					// into
+					IStatSet[] stSet = new IStatSet[statSets.size()];
+					stSet = statSets.toArray(stSet);
+					paramSets.add(this.factory.getParamSet(stSet,
+							this.params[j]));
+
 				}
-				waveSets.add(this.factory.getWaveSet(
-						(IParamSet[]) paramSets.toArray(), this.wavelenghts[i]));
+
+				IParamSet[] prmSet = new IParamSet[paramSets.size()];
+				prmSet = paramSets.toArray(prmSet);
+				waveSets.add(this.factory.getWaveSet(prmSet,
+						this.wavelenghts[i]));
 			}
 			con.close();
 
-			return this.factory.getWindowSet(
-					(IWavelengthSet[]) waveSets.toArray(), this.classId,
-					this.windowId);
+			IWavelengthSet[] wvSet = new IWavelengthSet[waveSets.size()];
+			wvSet = waveSets.toArray(wvSet);
+
+			return this.factory
+					.getWindowSet(wvSet, this.classId, this.windowId);
 		} catch (SQLException e) {
 
 			if (con != null) {
 				try {
 					con.close();
 				} catch (SQLException e1) {
+					System.out.println(e.getErrorCode());
 				}
 			}
 			throw new Exception(e.getMessage());

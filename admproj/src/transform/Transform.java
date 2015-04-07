@@ -1,26 +1,16 @@
 package transform;
 
 import java.util.ArrayList;
-
-import org.mockito.internal.util.reflection.LenientCopyTool;
+import java.util.concurrent.Callable;
 
 import admproj.interfaces.IProjectFactory;
-
-import com.mysql.fabric.xmlrpc.base.Param;
-
-import datatypes.ParamSet;
-import datatypes.StatSet;
-import datatypes.WavelengthSet;
-import datatypes.WindowSet;
 import datatypes.interfaces.IParamSet;
 import datatypes.interfaces.IStatSet;
 import datatypes.interfaces.IWavelengthSet;
 import datatypes.interfaces.IWindowSet;
-import transform.interfaces.ITransform;
-import wavelets.*;
 import wavelets.interfaces.IWavelet;
 
-public class Transform implements ITransform {
+public class Transform implements Callable<IWindowSet> {
 	private IProjectFactory factory;
 	private IWindowSet original;
 	IWavelet wavelet;
@@ -40,16 +30,18 @@ public class Transform implements ITransform {
 
 	@Override
 	public IWindowSet call() throws Exception {
-		// TODO Auto-generated method stub
+
 		IWavelengthSet[] transformedSets = new IWavelengthSet[original.size()];
-		int length = original.getWavlengthSet(0).getParamSet(0).size();
+		int length = original.getWavelengthSet(0).size();
 		for (int waveId = 0; waveId < original.size(); waveId++) {
-			IWavelengthSet waveLengthSet = original.getWavlengthSet(waveId);
+			IWavelengthSet waveLengthSet = original.getWavelengthSet(waveId);
 			IParamSet[] paramSetArray = new IParamSet[length];
 			for (int paramIndex = 0; paramIndex < length; paramIndex++) {
 				IParamSet param = waveLengthSet.getParamSet(paramIndex);
-				double[][] convertedParamMatrix = convertParamSetToDoubleMatrix(param);
-				double[][] transformedParamMatrix = transformConvertedParamStat(convertedParamMatrix);
+				double[][] convertedParamMatrix = this
+						.convertParamSetToDoubleMatrix(param);
+				double[][] transformedParamMatrix = this
+						.transformConvertedParamStat(convertedParamMatrix);
 				IParamSet transformedParam = convertDoubleMatrixToParamSet(
 						transformedParamMatrix, param.getParamId());
 				paramSetArray[paramIndex] = transformedParam;
@@ -57,6 +49,7 @@ public class Transform implements ITransform {
 			transformedSets[waveId] = this.factory.getWaveSet(paramSetArray,
 					waveLengthSet.getWaveId());
 		}
+
 		return this.factory.getWindowSet(transformedSets,
 				original.memberOfClass(), original.getWindowId());
 	}
@@ -78,14 +71,17 @@ public class Transform implements ITransform {
 
 	private double[][] transformConvertedParamStat(double[][] convertedParamSet) {
 		int numberOfStats = convertedParamSet.length;
-		int length = convertedParamSet[0].length;
-		double[][] transformedParamSet = new double[numberOfStats][length];
+		ArrayList<double[]> transformResults = new ArrayList<double[]>();
 		for (int statIndex = 0; statIndex < numberOfStats; statIndex++) {
 			double[] data = convertedParamSet[statIndex];
-			double[] transformedData = wavelet.calcWavelet(data);
-			for (int index = 0; index < length; index++) {
-				transformedParamSet[statIndex][index] = transformedData[index];
-			}
+			double[] transformedData = this.wavelet.calcWavelet(data);
+			transformResults.add(transformedData);
+		}
+
+		double[][] transformedParamSet = new double[numberOfStats][transformResults
+				.get(0).length];
+		for (int index = 0; index < transformResults.size(); index++) {
+			transformedParamSet[index] = transformResults.get(0);
 		}
 		return transformedParamSet;
 	}

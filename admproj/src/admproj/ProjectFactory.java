@@ -4,32 +4,32 @@
 package admproj;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import datatypes.ParamSet;
-import datatypes.StatSet;
-import datatypes.WavelengthSet;
-import datatypes.WindowSet;
-import datatypes.interfaces.IParamSet;
-import datatypes.interfaces.IStatSet;
-import datatypes.interfaces.IWavelengthSet;
-import datatypes.interfaces.IWindowSet;
-import dbconnect.CallableWindowFetch;
-import dbconnect.DbWindowSetResults;
-import dbconnect.DustinDbConnection;
-import dbconnect.interfaces.IDbCon;
-import dbconnect.interfaces.IDbWindowSetResults;
+import datatypes.*;
+import datatypes.interfaces.*;
+import dbconnect.*;
+import dbconnect.interfaces.*;
 import exceptions.InvalidConfigException;
 
 import org.w3c.dom.*;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+
 import admproj.interfaces.IProjectFactory;
 import snaq.db.DBPoolDataSource;
+import transform.Transform;
+import transform.TransformCallback;
+import wavelets.DCT;
+import wavelets.HaarWavelet;
 
 /**
  * @author Dustin Kempton
@@ -48,22 +48,21 @@ public class ProjectFactory implements IProjectFactory {
 	String valQuery;
 	String driverClass;
 	String url;
-
+	String transformName;
 	// Settings for dataset retrieval
 	int pageSize;
 	int wavelengths[];
 	int params[];
 
 	// for dbpool logging
-	PrintWriter wrtr;
+	// PrintWriter wrtr;
 	DBPoolDataSource dbPoolSourc = null;
+	ListeningExecutorService executor = null;
+	IDbCon dbcon = null;
 
 	public ProjectFactory() throws InvalidConfigException {
 		this.config();
-	}
 
-	@Override
-	public IDbCon getDbCon() {
 		if (this.dbPoolSourc == null) {
 			this.dbPoolSourc = new DBPoolDataSource();
 			this.dbPoolSourc.setName(this.poolName);
@@ -79,7 +78,23 @@ public class ProjectFactory implements IProjectFactory {
 			this.dbPoolSourc.setUrl(this.url);
 		}
 
-		return new DustinDbConnection(this.dbPoolSourc, this);
+		if (this.executor == null) {
+			this.executor = MoreExecutors.listeningDecorator(Executors
+					.newFixedThreadPool(this.maxPool));
+			/*
+			 * new NotifyingBlockingThreadPoolExecutor( this.maxPool,
+			 * this.poolMaxSize * 4, this.poolIdleTime, TimeUnit.SECONDS));
+			 */
+		}
+
+		if (this.dbcon == null) {
+			this.dbcon = new DbConnection(this);
+		}
+	}
+
+	@Override
+	public IDbCon getDbCon() {
+		return this.dbcon;
 	}
 
 	@Override
@@ -91,8 +106,15 @@ public class ProjectFactory implements IProjectFactory {
 
 	@Override
 	public Callable<IWindowSet> getWinSetCallable(int windowId, int classId) {
-		return new CallableWindowFetch(this.dbPoolSourc, this,
+		return new CallableWindowFetchDustinDb(this.dbPoolSourc, this,
 				this.wavelengths, this.params, windowId, classId);
+	}
+
+	@Override
+	public Callable<Boolean> getTransformSaveCallable(IWindowSet transformedSet) {
+		return new CallableTransfromSaveDustinDb(this.dbPoolSourc,
+				transformedSet, this.wavelengths, this.params,
+				this.transformName);
 	}
 
 	@Override
@@ -116,6 +138,33 @@ public class ProjectFactory implements IProjectFactory {
 		return new WindowSet(waveSets, classId, windowId);
 	}
 
+	@Override
+	public FutureCallback<IWindowSet> getWindowRetrievalCallBack() {
+		return new WindowRetrievalCallBack(this.executor, this);
+	}
+
+	@Override
+	public FutureCallback<IWindowSet> getTransformCallBack() {
+		return new TransformCallback(this.executor, this.dbcon, this);
+	}
+
+	@Override
+	public Callable<IWindowSet> getTransformWinSetCallable(IWindowSet inputSet) {
+		if (this.transformName.compareTo("DCT") == 0) {
+			return new Transform(this, inputSet, new DCT());
+		} else {
+			return new Transform(this, inputSet, new HaarWavelet());
+		}
+	}
+
+	@Override
+	public WorkSupervisor getSuper() {
+		return new WorkSupervisor(this.executor, this.dbcon, this);
+	}
+
+	// /////////////////////////////////////////////////////////////////////////////////
+	// Start of private methods
+	// ////////////////////////////////////////////////////////////////////////////////
 	private void config() throws InvalidConfigException {
 		try {
 			DocumentBuilderFactory fctry = DocumentBuilderFactory.newInstance();
@@ -204,10 +253,13 @@ public class ProjectFactory implements IProjectFactory {
 					String parmMaxStr = this.getAttrib(nde, "max");
 					int parmMin = Integer.parseInt(parmMinStr);
 					int parmMax = Integer.parseInt(parmMaxStr);
-					this.wavelengths = new int[parmMax - parmMin + 1];
+					this.params = new int[parmMax - parmMin + 1];
 					for (int k = parmMin; k <= parmMax; k++) {
-						this.wavelengths[k - parmMin] = k;
+						this.params[k - parmMin] = k;
 					}
+					break;
+				case "transform":
+					this.transformName = this.getAttrib(nde, "name");
 					break;
 				default:
 					System.out.print("Unknown Element in admproj.cfg.xml: ");
