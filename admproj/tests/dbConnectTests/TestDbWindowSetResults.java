@@ -71,6 +71,7 @@ public class TestDbWindowSetResults {
 			Connection conn = createMock(Connection.class);
 			expect(conn.prepareStatement((String) anyString())).andReturn(
 					(PreparedStatement) stmt);
+			conn.setAutoCommit(true);
 			conn.close();
 
 			// set datasource getConnection method to return the connection
@@ -118,6 +119,8 @@ public class TestDbWindowSetResults {
 			Connection conn = createMock(Connection.class);
 			expect(conn.prepareStatement((String) anyString())).andStubReturn(
 					(PreparedStatement) stmt);
+			conn.setAutoCommit(true);
+			EasyMock.expectLastCall().anyTimes();
 			conn.close();
 			EasyMock.expectLastCall().anyTimes();
 
@@ -168,6 +171,7 @@ public class TestDbWindowSetResults {
 			Connection conn = createMock(Connection.class);
 			expect(conn.prepareStatement((String) anyString())).andReturn(
 					(PreparedStatement) stmt);
+			conn.setAutoCommit(true);
 			conn.close();
 
 			// set datasource getConnection method to return the connection
@@ -233,6 +237,8 @@ public class TestDbWindowSetResults {
 			Connection conn = createMock(Connection.class);
 			expect(conn.prepareStatement((String) anyString())).andStubReturn(
 					(PreparedStatement) stmt);
+			conn.setAutoCommit(true);
+			EasyMock.expectLastCall().anyTimes();
 			conn.close();
 			EasyMock.expectLastCall().anyTimes();
 
@@ -296,7 +302,9 @@ public class TestDbWindowSetResults {
 			Connection conn = createMock(Connection.class);
 			expect(conn.prepareStatement((String) anyString())).andStubReturn(
 					(PreparedStatement) stmt);
+			conn.setAutoCommit(true);
 			conn.close();
+			conn.setAutoCommit(true);
 			conn.close();
 
 			// set datasource getConnection method to return the connection

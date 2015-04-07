@@ -104,6 +104,7 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 				// prepare the statement.
 				con = this.dsourc.getConnection();
 				con.setAutoCommit(true);
+
 				PreparedStatement prep = con
 						.prepareStatement("SELECT window_id, class_id  FROM combined_windows "
 								+ "GROUP BY window_id ORDER BY window_id LIMIT ?,?;");
