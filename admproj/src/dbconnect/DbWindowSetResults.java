@@ -24,7 +24,7 @@ import admproj.interfaces.IProjectFactory;
  */
 public class DbWindowSetResults implements IDbWindowSetResults {
 	private DataSource dsourc;
-	IProjectFactory factory;
+	private IProjectFactory factory;
 	private int[][] pageOfWindowIds;
 
 	private int pageSize;

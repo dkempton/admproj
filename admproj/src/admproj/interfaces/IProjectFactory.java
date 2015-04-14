@@ -10,6 +10,7 @@ import admproj.WorkSupervisor;
 
 import com.google.common.util.concurrent.FutureCallback;
 
+import datatypes.interfaces.ICoefValues;
 import datatypes.interfaces.IParamSet;
 import datatypes.interfaces.IStatSet;
 import datatypes.interfaces.IWavelengthSet;
@@ -36,11 +37,19 @@ public interface IProjectFactory {
 	public IWindowSet getWindowSet(IWavelengthSet[] waveSets, int classId,
 			int windowId);
 
+	public ICoefValues getCoefVals(int clslabel, double[] coefs);
+
 	public Callable<IWindowSet> getWinSetCallable(int windowId, int classId);
 
 	public Callable<Boolean> getTransformSaveCallable(IWindowSet transformedSet);
 
 	public Callable<IWindowSet> getTransformWinSetCallable(IWindowSet inputSet);
+
+	public Callable<ICoefValues> getCoefValuesCallable(int windowId,
+			int wavelengthId, int paramId, int statId, int classId);
+
+	public Callable<ICoefValues[]> getCoefValuesArrCallable(int wavelengthId,
+			int paramId, int statId) throws InterruptedException;
 
 	public FutureCallback<IWindowSet> getWindowRetrievalCallBack(
 			IWorkSupervisor supervisor);

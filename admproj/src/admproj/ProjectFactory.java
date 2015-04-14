@@ -1,6 +1,3 @@
-/**
- * 
- */
 package admproj;
 
 import java.io.File;
@@ -119,6 +116,22 @@ public class ProjectFactory implements IProjectFactory {
 	}
 
 	@Override
+	public Callable<ICoefValues> getCoefValuesCallable(int windowId,
+			int wavelengthId, int paramId, int statId, int classId) {
+		return new CallableCoefsFetchDustinDB(this.dbPoolSourc, this,
+				this.transformName.toLowerCase(), windowId, wavelengthId,
+				paramId, statId, classId);
+	}
+
+	@Override
+	public Callable<ICoefValues[]> getCoefValuesArrCallable(int wavelengthId,
+			int paramId, int statId) throws InterruptedException {
+		return new CallableCoefsArrFetchDustinDB(this.dbPoolSourc, this,
+				this.executor, this.transformName, this.pageSize,
+				this.poolIdleTime, wavelengthId, paramId, statId);
+	}
+
+	@Override
 	public IStatSet getStatSet(double[] stats) {
 		return new StatSet(stats);
 	}
@@ -137,6 +150,11 @@ public class ProjectFactory implements IProjectFactory {
 	public IWindowSet getWindowSet(IWavelengthSet[] waveSets, int classId,
 			int windowId) {
 		return new WindowSet(waveSets, classId, windowId);
+	}
+
+	@Override
+	public ICoefValues getCoefVals(int clslabel, double[] coefs) {
+		return new CoefValues(clslabel, coefs);
 	}
 
 	@Override
