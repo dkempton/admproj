@@ -86,7 +86,6 @@ public class CallableWindowFetchDustinDb implements Callable<IWindowSet> {
 					ResultSet paramsResults = getParamsStmt.executeQuery();
 
 					while (paramsResults.next()) {
-
 						double[] paramsStats = new double[5];
 						paramsStats[0] = paramsResults.getDouble(1);
 						paramsStats[1] = paramsResults.getDouble(2);
@@ -113,7 +112,7 @@ public class CallableWindowFetchDustinDb implements Callable<IWindowSet> {
 
 			IWavelengthSet[] wvSet = new IWavelengthSet[waveSets.size()];
 			wvSet = waveSets.toArray(wvSet);
-
+			// System.out.println(wvSet.length);
 			return this.factory
 					.getWindowSet(wvSet, this.classId, this.windowId);
 		} catch (SQLException e) {

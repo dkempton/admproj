@@ -32,11 +32,7 @@ public class DbConnection implements IDbCon {
 		}
 	}
 
-	@Override
-	public FutureTask<Boolean> saveTransformToDb(IWindowSet transformedSet) {
-		return new FutureTask<Boolean>(
-				this.factory.getTransformSaveCallable(transformedSet));
-	}
+	
 
 
 }

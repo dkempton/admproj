@@ -2,6 +2,13 @@ package wavelets;
 
 import java.util.Vector;
 
+import org.apache.commons.math3.analysis.function.Floor;
+import org.apache.commons.math3.analysis.function.Log;
+import org.apache.commons.math3.analysis.function.Pow;
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+
 import wavelets.interfaces.IWavelet;
 
 /**
@@ -67,21 +74,73 @@ import wavelets.interfaces.IWavelet;
  */
 
 public class HaarWavelet implements IWavelet {
-	private double haar_value;
+	// private double haar_value;
+	@SuppressWarnings("rawtypes")
 	private Vector coefficient;
-	private double [] data;
-	private double haarValue;
-	
+	// private double[] data;
+	// private double haarValue;
 
+	SplineInterpolator interp;
+
+	public HaarWavelet() {
+		interp = new SplineInterpolator();
+	}
+
+	@SuppressWarnings("rawtypes")
 	@Override
 	public double[] calcWavelet(double[] values) {
-		assert values != null;
-		data = values;
+		if (values == null)
+			throw new IllegalArgumentException(
+					"doublep[] values cannot be null in call to calcWavelet in HaarWavelet.");
+
+		// data = values;
 		coefficient = new Vector();
-		haar_value  = calcHaarValue(values);
-		return reverseCoef();
+
+		try {
+			// find the log base 2 size of the input array
+			Log lg = new Log();
+			double lgVal = lg.value(values.length) / lg.value(2.0);
+
+			// get the ceiling value of that
+			// Ceil cl = new Ceil();
+			// double clVal = cl.value(lgVal);
+
+			// actually lets down sample by taking the floor
+			Floor fl = new Floor();
+			double clVal = fl.value(lgVal);
+
+			// get the power of two value of the ceiling
+			Pow pw = new Pow();
+			double num = pw.value(2, clVal);
+
+			// add one because the stupid transform requires power of 2 plus 1
+			// values
+			int intNum = (int) num;
+			double[] preTrans = new double[intNum];
+
+			// create an index of values for spline interpolation
+			double[] xVals = new double[values.length];
+			for (int i = 0; i < values.length; i++) {
+				xVals[i] = i;
+			}
+
+			// find the spline interpolation for power of 2 values
+			PolynomialSplineFunction spline = interp.interpolate(xVals, values);
+			double stepSize = (values.length - 1) / (double) intNum;
+			for (int i = 0; i < intNum; i++) {
+				preTrans[i] = spline.value(stepSize * i);
+			}
+
+			// now we can actually calculate the transform
+			calcHaarValue(preTrans);
+			return reverseCoef();
+
+		} catch (MathIllegalArgumentException e) {
+			System.out.println(e);
+		}
+		return new double[1];
 	}
-	
+
 	/**
 	 * 
 	 Recursively calculate the Haar transform. The result of the Haar
@@ -90,6 +149,7 @@ public class HaarWavelet implements IWavelet {
 	 * <p>
 	 * The number of elements in <tt>values</tt> must be a power of two.
 	 */
+	@SuppressWarnings("unchecked")
 	private double calcHaarValue(double[] values) {
 		double retVal;
 
@@ -109,8 +169,7 @@ public class HaarWavelet implements IWavelet {
 
 		return retVal;
 	} // haar_calc
-	
-	
+
 	/**
 	 * The Haar transform coefficients are generated from the longest
 	 * coefficient vector (highest frequency) to the shortest (lowest
@@ -119,7 +178,8 @@ public class HaarWavelet implements IWavelet {
 	 * This function reverses the coefficient order, so they will be ordered
 	 * from lowest to highest frequency.
 	 */
-	private double [] reverseCoef() {
+	@SuppressWarnings("unchecked")
+	private double[] reverseCoef() {
 		int size = coefficient.size();
 		Object tmp;
 
@@ -127,13 +187,30 @@ public class HaarWavelet implements IWavelet {
 			tmp = coefficient.elementAt(i);
 			coefficient.setElementAt(coefficient.elementAt(j), i);
 			coefficient.setElementAt(tmp, j);
-		} 
-		double [] transformed = new double[coefficient.size()];
-		for (int index = 0; index < coefficient.size(); index++){
-			double value = (double) coefficient.get(index);
-			transformed[index] = value;
 		}
-		return transformed;
-	} 
+		try {
+			int count = 0;
+			for (int index = 0; index < coefficient.size(); index++) {
+				double[] value = (double[]) coefficient.get(index);
+				count += value.length;
+			}
+			double[] transformed = new double[count];
+
+			int index = 0;
+			for (int i = 0; i < coefficient.size(); i++) {
+				double[] value = (double[]) coefficient.get(i);
+				for (int j = 0; j < value.length; j++) {
+					transformed[index++] = value[j];
+				}
+			}
+
+			return transformed;
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return new double[1];
+	}
 
 }

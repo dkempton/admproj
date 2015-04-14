@@ -25,6 +25,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import admproj.interfaces.IProjectFactory;
+import admproj.interfaces.IWorkSupervisor;
 import snaq.db.DBPoolDataSource;
 import transform.Transform;
 import transform.TransformCallback;
@@ -139,13 +140,21 @@ public class ProjectFactory implements IProjectFactory {
 	}
 
 	@Override
-	public FutureCallback<IWindowSet> getWindowRetrievalCallBack() {
-		return new WindowRetrievalCallBack(this.executor, this);
+	public FutureCallback<IWindowSet> getWindowRetrievalCallBack(
+			IWorkSupervisor supervisor) {
+		return new WindowRetrievalCallBack(supervisor);
 	}
 
 	@Override
-	public FutureCallback<IWindowSet> getTransformCallBack() {
-		return new TransformCallback(this.executor, this.dbcon, this);
+	public FutureCallback<IWindowSet> getTransformCallBack(
+			IWorkSupervisor supervisor) {
+		return new TransformCallback(supervisor);
+	}
+
+	@Override
+	public FutureCallback<Boolean> getSavedTransfromCallBack(
+			IWorkSupervisor supervisor) {
+		return new TransformSavedCallback(supervisor);
 	}
 
 	@Override

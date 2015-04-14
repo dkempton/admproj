@@ -147,8 +147,10 @@ public class DbWindowSetResults implements IDbWindowSetResults {
 					try {
 						con.close();
 					} catch (SQLException e1) {
+						System.out.println(e1.getMessage());
 					}
 				}
+				System.out.println(e.getMessage());
 				return false;
 			}
 		} else {

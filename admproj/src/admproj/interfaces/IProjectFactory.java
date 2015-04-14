@@ -40,11 +40,16 @@ public interface IProjectFactory {
 
 	public Callable<Boolean> getTransformSaveCallable(IWindowSet transformedSet);
 
-	public FutureCallback<IWindowSet> getWindowRetrievalCallBack();
-
-	public FutureCallback<IWindowSet> getTransformCallBack();
-
 	public Callable<IWindowSet> getTransformWinSetCallable(IWindowSet inputSet);
+
+	public FutureCallback<IWindowSet> getWindowRetrievalCallBack(
+			IWorkSupervisor supervisor);
+
+	public FutureCallback<IWindowSet> getTransformCallBack(
+			IWorkSupervisor supervisor);
+
+	public FutureCallback<Boolean> getSavedTransfromCallBack(
+			IWorkSupervisor supervisor);
 
 	public WorkSupervisor getSuper();
 }

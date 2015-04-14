@@ -61,7 +61,7 @@ public class Transform implements Callable<IWindowSet> {
 		int lengthOfTrack = paramSet.size();
 		double[][] convertedParamSet = new double[numberOfStats][lengthOfTrack];
 		for (int statIndex = 0; statIndex < numberOfStats; statIndex++) {
-			for (int index = 0; index < numberOfStats; index++) {
+			for (int index = 0; index < lengthOfTrack; index++) {
 				convertedParamSet[statIndex][index] = paramSet
 						.getStatSet(index).getStat(statIndex);
 			}
@@ -74,7 +74,7 @@ public class Transform implements Callable<IWindowSet> {
 		ArrayList<double[]> transformResults = new ArrayList<double[]>();
 		for (int statIndex = 0; statIndex < numberOfStats; statIndex++) {
 			double[] data = convertedParamSet[statIndex];
-			double[] transformedData = this.wavelet.calcWavelet(data);
+ 			double[] transformedData = this.wavelet.calcWavelet(data);
 			transformResults.add(transformedData);
 		}
 
