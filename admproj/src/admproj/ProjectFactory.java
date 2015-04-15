@@ -4,7 +4,6 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -83,10 +82,6 @@ public class ProjectFactory implements IProjectFactory {
 		if (this.executor == null) {
 			this.executor = MoreExecutors.listeningDecorator(Executors
 					.newFixedThreadPool(this.maxPool));
-			/*
-			 * new NotifyingBlockingThreadPoolExecutor( this.maxPool,
-			 * this.poolMaxSize * 4, this.poolIdleTime, TimeUnit.SECONDS));
-			 */
 		}
 
 		if (this.dbcon == null) {
@@ -122,7 +117,7 @@ public class ProjectFactory implements IProjectFactory {
 	@Override
 	public Callable<Boolean> getCalcFValsAndSaveCallable(ICoefSet coefSet) {
 		return new CallableCalcFValuesAndSaveDustinDb(this.dbPoolSourc, this,
-				this.transformName.toLowerCase(), coefSet.getParamId(),
+				this.transformName.toLowerCase(), coefSet.getWavelengthId(),
 				coefSet.getParamId(), coefSet.getStatId(), coefSet.getCoefs());
 	}
 

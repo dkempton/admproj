@@ -34,22 +34,23 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 	private ListeningExecutorService executor;
 	private int[][] pageOfWindowIds;
 
+	private static final int MAX_FETCH = 10;
+
 	private int pageSize;
 	private int currentPageSize;
 	private AtomicInteger currentIdx;
 	private int offset;
 	private long locTimeout;
-	private Lock lock;
 	private String idQury;
 
 	private int wavelengthId;
 	private int paramId;
 	private int statId;
 
-	private static final int MAX_FETCH = 10;
+	private Lock lock;
 	private Condition notFull;
 	private Condition doneProcessing;
-	private LinkedList<FutureTask<ICoefValues>> coefSetList;
+	private LinkedList<FutureTask<ICoefValues>> coefSetTaskList;
 	private ArrayList<ICoefValues> coefVals;
 	boolean doneFetching;
 
@@ -68,8 +69,7 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 			throw new IllegalArgumentException(
 					"ListeningExecutorService cannot be null in CallableCoefsArrFetch constructor.");
 
-		this.idQury = "SELECT window_id, class_id FROM dmdata." + table
-				+ "_transform_coefs GROUP BY window_id LIMIT ?,?;";
+		this.idQury = "SELECT window_id, class_id FROM dmdata.combined_windows_ids LIMIT ?,?;";
 
 		this.dsourc = dsourc;
 		this.factory = factory;
@@ -88,6 +88,7 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 		this.currentIdx = new AtomicInteger();
 		this.offset = 0;
 		this.pageOfWindowIds = new int[this.pageSize][2];
+		this.coefSetTaskList = new LinkedList<FutureTask<ICoefValues>>();
 		this.getNewPageOfIds();
 	}
 
@@ -103,11 +104,13 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 
 		// indicate we are done creating fetch tasks
 		this.lock.lock();
-		this.doneFetching = true;
-		this.lock.unlock();
-
-		// wait for to be done processing
-		this.doneProcessing.await();
+		try {
+			this.doneFetching = true;
+			// wait for to be done processing
+			this.doneProcessing.await();
+		} finally {
+			this.lock.unlock();
+		}
 
 		// put all of them into the array for retrieval.
 		ICoefValues[] coefValsArr = new ICoefValues[this.coefVals.size()];
@@ -127,7 +130,9 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 	public void onSuccess(ICoefValues vals) {
 		this.lock.lock();
 		try {
-			this.coefVals.add(vals);
+			if (vals != null) {
+				this.coefVals.add(vals);
+			}
 		} finally {
 			this.lock.unlock();
 		}
@@ -139,7 +144,8 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 
 		// take all of the task from the list that are done.
 		try {
-			Iterator<FutureTask<ICoefValues>> itr = this.coefSetList.iterator();
+			Iterator<FutureTask<ICoefValues>> itr = this.coefSetTaskList
+					.iterator();
 			while (itr.hasNext()) {
 				FutureTask<ICoefValues> tsk = itr.next();
 				if (tsk.isDone()) {
@@ -148,6 +154,8 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 				}
 			}
 
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			this.lock.unlock();
 		}
@@ -155,7 +163,7 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 		try {
 			// if all task are done then signal that we are ready to move on
 			this.lock.lock();
-			if (this.doneFetching && this.coefSetList.size() == 0) {
+			if (this.doneFetching && this.coefSetTaskList.size() == 0) {
 				this.doneProcessing.signal();
 			}
 		} finally {
@@ -164,12 +172,20 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 	}
 
 	private void createRetrievalTask() throws DbConException {
+		this.lock.lock();
+		try {
+			while (this.coefSetTaskList.size() == MAX_FETCH) {
+				notFull.await();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.lock.unlock();
+		}
+
 		if (this.hasNext()) {
 			this.lock.lock();
 			try {
-				while (this.coefSetList.size() == MAX_FETCH) {
-					notFull.await();
-				}
 
 				// get the id of the window to return a future task to
 				int idxVal = this.currentIdx.getAndIncrement();
@@ -186,10 +202,8 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 				ListenableFutureTask<ICoefValues> retrievalTask = (ListenableFutureTask<ICoefValues>) this.executor
 						.submit(clble);
 				Futures.addCallback(retrievalTask, this, this.executor);
-				this.coefSetList.add(retrievalTask);
+				this.coefSetTaskList.add(retrievalTask);
 
-			} catch (InterruptedException e) {
-				throw new DbConException(e.getMessage());
 			} finally {
 				this.lock.unlock();
 			}
@@ -251,15 +265,15 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 				} else {
 					return false;
 				}
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				return false;
 			} finally {
 				if (con != null) {
 					try {
 						con.close();
-					} catch (SQLException e1) {
-
+					} catch (Exception e1) {
+						e1.printStackTrace();
 					}
 				}
 				this.lock.unlock();

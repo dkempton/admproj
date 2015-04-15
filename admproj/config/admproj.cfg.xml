@@ -15,5 +15,5 @@
 	<wavelengthrange min="1" max="9" />
 	<paramrange min="1" max="10" />
 	<statsrange min="1" max="5" />
-	<transform name="HAAR" />
+	<transform name="DCT" />
 </configfile>

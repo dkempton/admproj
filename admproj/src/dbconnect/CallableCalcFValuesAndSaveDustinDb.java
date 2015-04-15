@@ -54,9 +54,12 @@ public class CallableCalcFValuesAndSaveDustinDb implements Callable<Boolean> {
 	@Override
 	public Boolean call() throws Exception {
 		IFTestCalc calculator = this.factory.getFValCalculator();
-
-		double[] fVals = calculator.fcalc(this.vals);
-
+		double[] fVals = new double[0];
+		try {
+			fVals = calculator.fcalc(this.vals);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		Connection con = null;
 		try {
 
@@ -66,11 +69,10 @@ public class CallableCalcFValuesAndSaveDustinDb implements Callable<Boolean> {
 			PreparedStatement saveFValsStmt = con
 					.prepareStatement(this.saveQueryString);
 
-			saveFValsStmt.setInt(1, this.wavelengthId);
-			saveFValsStmt.setInt(2, this.paramId);
-			saveFValsStmt.setInt(3, this.statId);
-
 			for (int i = 0; i < fVals.length; i++) {
+				saveFValsStmt.setInt(1, this.wavelengthId);
+				saveFValsStmt.setInt(2, this.paramId);
+				saveFValsStmt.setInt(3, this.statId);
 				saveFValsStmt.setInt(4, i);
 				saveFValsStmt.setDouble(5, fVals[i]);
 				saveFValsStmt.addBatch();
@@ -80,12 +82,16 @@ public class CallableCalcFValuesAndSaveDustinDb implements Callable<Boolean> {
 			con.commit();
 
 		} catch (Exception e) {
+			System.out.println("Wavelength: " + this.wavelengthId);
+			System.out.println("Param: " + this.paramId);
+			System.out.println("Stat: " + this.statId);
+			e.printStackTrace();
 			throw new Exception(e.getMessage());
 		} finally {
 			if (con != null) {
 				try {
 					con.close();
-				} catch (SQLException e1) {
+				} catch (Exception e1) {
 				}
 			}
 		}

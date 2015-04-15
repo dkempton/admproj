@@ -23,7 +23,6 @@ public class CallableCoefsFetchDustinDB implements Callable<ICoefValues> {
 	int classId;
 	String[] statNames = { "mean", "median", "std_dev", "min", "max" };
 	String coefQuery;
-	String classQuery;
 
 	public CallableCoefsFetchDustinDB(DataSource dsourc,
 			IProjectFactory factory, String table, int windowId,
@@ -45,9 +44,6 @@ public class CallableCoefsFetchDustinDB implements Callable<ICoefValues> {
 				+ "wavelength_id = ? and param_id = ? and window_id = ? "
 				+ "ORDER BY coef_num;";
 
-		classQuery = "SELECT class_id FROM dmdata." + table
-				+ "_transform_coefs where window_id = ? GROUP BY window_id;";
-
 		this.wavelengthId = wavelengthId;
 		this.paramId = paramId;
 		this.windowId = windowId;
@@ -57,6 +53,7 @@ public class CallableCoefsFetchDustinDB implements Callable<ICoefValues> {
 	@Override
 	public ICoefValues call() throws Exception {
 		Connection con = null;
+		double[] coefsArr = null;
 		try {
 
 			// get a connection from the db connection pool and
@@ -80,23 +77,27 @@ public class CallableCoefsFetchDustinDB implements Callable<ICoefValues> {
 				coefs.add(coefResults.getDouble(1));
 			}
 
-			double[] coefsArr = new double[coefs.size()];
+			coefsArr = new double[coefs.size()];
 			for (int i = 0; i < coefsArr.length; i++) {
 				coefsArr[i] = coefs.get(i);
 			}
-			return this.factory.getCoefVals(this.classId, coefsArr);
 
-		} catch (SQLException e) {
-
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+			throw new Exception(e.getMessage());
+		} finally {
 			if (con != null) {
 				try {
 					con.close();
-				} catch (SQLException e1) {
-					System.out.println(e.getErrorCode());
+				} catch (Exception e1) {
+
 				}
 			}
-			throw new Exception(e.getMessage());
 		}
+		
+		ICoefValues vals = this.factory.getCoefVals(this.classId, coefsArr);
+		return vals;
 	}
 
 }

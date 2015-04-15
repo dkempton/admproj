@@ -24,7 +24,7 @@ public class FStatCalcWorkSupervisor implements IFStatCalcWorkSupervisor {
 	LinkedList<FutureTask<ICoefSet>> fetchTaskList;
 	LinkedList<FutureTask<Boolean>> saveFStatTaskList;
 
-	private static final int MAX_FETCH = 20;
+	private static final int MAX_FETCH = 10;
 	Lock lock;
 	Condition notFull;
 	Condition doneProcessing;
@@ -74,7 +74,8 @@ public class FStatCalcWorkSupervisor implements IFStatCalcWorkSupervisor {
 		for (int i = 0; i < this.wavelengthIds.length; i++) {
 			for (int j = 0; j < this.paramIds.length; j++) {
 				for (int k = 0; k < this.statIds.length; k++) {
-					this.createRetrievalTask(i, j, k);
+					this.createRetrievalTask(this.wavelengthIds[i],
+							this.paramIds[j], this.statIds[k]);
 				}
 			}
 		}
@@ -86,7 +87,6 @@ public class FStatCalcWorkSupervisor implements IFStatCalcWorkSupervisor {
 		this.lock.lock();
 		try {
 			this.doneProcessing.await();
-
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -129,7 +129,6 @@ public class FStatCalcWorkSupervisor implements IFStatCalcWorkSupervisor {
 				FutureTask<Boolean> tsk = itr.next();
 				if (tsk.isDone()) {
 					itr.remove();
-					this.notFull.signal();
 				}
 			}
 
