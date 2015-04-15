@@ -1,13 +1,13 @@
 package dbconnect;
 
-import admproj.interfaces.IWorkSupervisor;
+import admproj.interfaces.ITransformWorkSupervisor;
 
 import com.google.common.util.concurrent.FutureCallback;
 
 public class TransformSavedCallback implements FutureCallback<Boolean> {
-	IWorkSupervisor supervisor;
+	ITransformWorkSupervisor supervisor;
 
-	public TransformSavedCallback(IWorkSupervisor supervisor) {
+	public TransformSavedCallback(ITransformWorkSupervisor supervisor) {
 		if (supervisor == null)
 			throw new IllegalArgumentException(
 					"IWorkSupervisor cannot be null inTransformSavedCallBack constructor.");

@@ -6,10 +6,12 @@ package admproj.interfaces;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
-import admproj.WorkSupervisor;
+import utils.interfaces.IFTestCalc;
+import admproj.TransformWorkSupervisor;
 
 import com.google.common.util.concurrent.FutureCallback;
 
+import datatypes.interfaces.ICoefSet;
 import datatypes.interfaces.ICoefValues;
 import datatypes.interfaces.IParamSet;
 import datatypes.interfaces.IStatSet;
@@ -39,26 +41,41 @@ public interface IProjectFactory {
 
 	public ICoefValues getCoefVals(int clslabel, double[] coefs);
 
+	public ICoefSet getCoefSet(int wavelenghtId, int paramId, int statId,
+			ICoefValues[] coefs);
+
 	public Callable<IWindowSet> getWinSetCallable(int windowId, int classId);
 
 	public Callable<Boolean> getTransformSaveCallable(IWindowSet transformedSet);
+
+	public Callable<Boolean> getCalcFValsAndSaveCallable(ICoefSet coefSet);
 
 	public Callable<IWindowSet> getTransformWinSetCallable(IWindowSet inputSet);
 
 	public Callable<ICoefValues> getCoefValuesCallable(int windowId,
 			int wavelengthId, int paramId, int statId, int classId);
 
-	public Callable<ICoefValues[]> getCoefValuesArrCallable(int wavelengthId,
+	public Callable<ICoefSet> getCoefValuesSetCallable(int wavelengthId,
 			int paramId, int statId) throws InterruptedException;
 
 	public FutureCallback<IWindowSet> getWindowRetrievalCallBack(
-			IWorkSupervisor supervisor);
+			ITransformWorkSupervisor supervisor);
 
 	public FutureCallback<IWindowSet> getTransformCallBack(
-			IWorkSupervisor supervisor);
+			ITransformWorkSupervisor supervisor);
 
 	public FutureCallback<Boolean> getSavedTransfromCallBack(
-			IWorkSupervisor supervisor);
+			ITransformWorkSupervisor supervisor);
 
-	public WorkSupervisor getSuper();
+	public FutureCallback<ICoefSet> getCoefValuesRetreivalCallBack(
+			IFStatCalcWorkSupervisor supervisor);
+
+	public FutureCallback<Boolean> getSavedFStatValsCallBack(
+			IFStatCalcWorkSupervisor supervisor);
+
+	public TransformWorkSupervisor getTransformSuper();
+	
+	public IFStatCalcWorkSupervisor getFStatCalcSuper();
+
+	public IFTestCalc getFValCalculator();
 }

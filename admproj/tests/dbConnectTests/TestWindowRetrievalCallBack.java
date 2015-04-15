@@ -5,7 +5,7 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Test;
 
-import admproj.interfaces.IWorkSupervisor;
+import admproj.interfaces.ITransformWorkSupervisor;
 import datatypes.interfaces.IWindowSet;
 import dbconnect.WindowRetrievalCallBack;
 
@@ -19,7 +19,7 @@ public class TestWindowRetrievalCallBack {
 	@Test
 	public void testCallsGetMessageOnThrowable() {
 		Throwable thr = mock(Throwable.class);
-		IWorkSupervisor spr = mock(IWorkSupervisor.class);
+		ITransformWorkSupervisor spr = mock(ITransformWorkSupervisor.class);
 		WindowRetrievalCallBack callBack = new WindowRetrievalCallBack(spr);
 		callBack.onFailure(thr);
 		verify(thr, times(1)).getMessage();
@@ -27,7 +27,7 @@ public class TestWindowRetrievalCallBack {
 
 	@Test
 	public void testSupervisorCalled() {
-		IWorkSupervisor spr = mock(IWorkSupervisor.class);
+		ITransformWorkSupervisor spr = mock(ITransformWorkSupervisor.class);
 		WindowRetrievalCallBack callBack = new WindowRetrievalCallBack(spr);
 		IWindowSet windowSet = mock(IWindowSet.class);
 		callBack.onSuccess(windowSet);

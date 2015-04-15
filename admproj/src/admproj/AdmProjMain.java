@@ -1,5 +1,6 @@
 package admproj;
 
+import admproj.interfaces.IFStatCalcWorkSupervisor;
 import admproj.interfaces.IProjectFactory;
 import dbconnect.interfaces.IDbCon;
 import exceptions.InvalidConfigException;
@@ -11,8 +12,11 @@ public class AdmProjMain {
 
 		try {
 			IProjectFactory fctry = new ProjectFactory();
-			WorkSupervisor supervisor = fctry.getSuper();
-			supervisor.run();
+			//TransformWorkSupervisor supervisor = fctry.getSuper();
+			//supervisor.run();
+			IFStatCalcWorkSupervisor supervisor2 = fctry.getFStatCalcSuper();
+			supervisor2.run();
+			
 		} catch (InvalidConfigException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

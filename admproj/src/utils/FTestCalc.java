@@ -1,16 +1,16 @@
-package admproj;
+package utils;
 
 import java.util.*;
 
 import org.apache.commons.math3.stat.inference.OneWayAnova;
 
+import utils.interfaces.IFTestCalc;
 import datatypes.interfaces.ICoefValues;
 
-public class FTestCalc {
+public class FTestCalc implements IFTestCalc {
 	OneWayAnova ow = new OneWayAnova();
 
 	public double[] fcalc(ICoefValues[] coefs) {
-
 
 		int j = 0;
 

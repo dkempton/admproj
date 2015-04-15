@@ -1,15 +1,15 @@
 package dbconnect;
 
-import admproj.interfaces.IWorkSupervisor;
+import admproj.interfaces.ITransformWorkSupervisor;
 
 import com.google.common.util.concurrent.FutureCallback;
 
 import datatypes.interfaces.IWindowSet;
 
 public class WindowRetrievalCallBack implements FutureCallback<IWindowSet> {
-	IWorkSupervisor supervisor;
+	ITransformWorkSupervisor supervisor;
 
-	public WindowRetrievalCallBack(IWorkSupervisor supervisor) {
+	public WindowRetrievalCallBack(ITransformWorkSupervisor supervisor) {
 		if (supervisor == null)
 			throw new IllegalArgumentException(
 					"IWorkSupervisor cannot be null in WindowRetrievalCallBack constructor.");

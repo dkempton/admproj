@@ -1,4 +1,4 @@
-package admproj.interfaces;
+package utils.interfaces;
 
 import datatypes.interfaces.ICoefValues;
 

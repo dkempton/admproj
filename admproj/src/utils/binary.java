@@ -1,4 +1,4 @@
-package wavelet_util;
+package utils;
 
 /**
  *

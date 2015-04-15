@@ -23,10 +23,11 @@ import com.google.common.util.concurrent.ListenableFutureTask;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 import admproj.interfaces.IProjectFactory;
+import datatypes.interfaces.ICoefSet;
 import datatypes.interfaces.ICoefValues;
 import exceptions.DbConException;
 
-public class CallableCoefsArrFetchDustinDB implements Callable<ICoefValues[]>,
+public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 		FutureCallback<ICoefValues> {
 	private DataSource dsourc;
 	private IProjectFactory factory;
@@ -52,7 +53,7 @@ public class CallableCoefsArrFetchDustinDB implements Callable<ICoefValues[]>,
 	private ArrayList<ICoefValues> coefVals;
 	boolean doneFetching;
 
-	public CallableCoefsArrFetchDustinDB(DataSource dsourc,
+	public CallableCoefsSetFetchDustinDB(DataSource dsourc,
 			IProjectFactory factory, ListeningExecutorService executor,
 			String table, int pageSize, long locTimeout, int wavelengthId,
 			int paramId, int statId) throws InterruptedException {
@@ -91,7 +92,7 @@ public class CallableCoefsArrFetchDustinDB implements Callable<ICoefValues[]>,
 	}
 
 	@Override
-	public ICoefValues[] call() throws Exception {
+	public ICoefSet call() throws Exception {
 		coefVals = new ArrayList<ICoefValues>();
 		this.doneFetching = false;
 
@@ -112,7 +113,8 @@ public class CallableCoefsArrFetchDustinDB implements Callable<ICoefValues[]>,
 		ICoefValues[] coefValsArr = new ICoefValues[this.coefVals.size()];
 		this.coefVals.toArray(coefValsArr);
 
-		return coefValsArr;
+		return this.factory.getCoefSet(this.wavelengthId, this.paramId,
+				this.statId, coefValsArr);
 	}
 
 	@Override

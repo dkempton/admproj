@@ -1,6 +1,6 @@
 package transform;
 
-import admproj.interfaces.IWorkSupervisor;
+import admproj.interfaces.ITransformWorkSupervisor;
 
 import com.google.common.util.concurrent.FutureCallback;
 
@@ -8,9 +8,9 @@ import datatypes.interfaces.IWindowSet;
 
 public class TransformCallback implements FutureCallback<IWindowSet> {
 
-	IWorkSupervisor supervisor;
+	ITransformWorkSupervisor supervisor;
 
-	public TransformCallback(IWorkSupervisor supervisor) {
+	public TransformCallback(ITransformWorkSupervisor supervisor) {
 		if (supervisor == null)
 			throw new IllegalArgumentException(
 					"IWorkSupervisor cannot be null in TransformCallBack constructor.");

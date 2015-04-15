@@ -21,11 +21,14 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import admproj.interfaces.IFStatCalcWorkSupervisor;
 import admproj.interfaces.IProjectFactory;
-import admproj.interfaces.IWorkSupervisor;
+import admproj.interfaces.ITransformWorkSupervisor;
 import snaq.db.DBPoolDataSource;
 import transform.Transform;
 import transform.TransformCallback;
+import utils.FTestCalc;
+import utils.interfaces.IFTestCalc;
 import wavelets.DCT;
 import wavelets.HaarWavelet;
 
@@ -51,6 +54,7 @@ public class ProjectFactory implements IProjectFactory {
 	int pageSize;
 	int wavelengths[];
 	int params[];
+	int stats[];
 
 	// for dbpool logging
 	// PrintWriter wrtr;
@@ -116,6 +120,13 @@ public class ProjectFactory implements IProjectFactory {
 	}
 
 	@Override
+	public Callable<Boolean> getCalcFValsAndSaveCallable(ICoefSet coefSet) {
+		return new CallableCalcFValuesAndSaveDustinDb(this.dbPoolSourc, this,
+				this.transformName.toLowerCase(), coefSet.getParamId(),
+				coefSet.getParamId(), coefSet.getStatId(), coefSet.getCoefs());
+	}
+
+	@Override
 	public Callable<ICoefValues> getCoefValuesCallable(int windowId,
 			int wavelengthId, int paramId, int statId, int classId) {
 		return new CallableCoefsFetchDustinDB(this.dbPoolSourc, this,
@@ -124,9 +135,9 @@ public class ProjectFactory implements IProjectFactory {
 	}
 
 	@Override
-	public Callable<ICoefValues[]> getCoefValuesArrCallable(int wavelengthId,
+	public Callable<ICoefSet> getCoefValuesSetCallable(int wavelengthId,
 			int paramId, int statId) throws InterruptedException {
-		return new CallableCoefsArrFetchDustinDB(this.dbPoolSourc, this,
+		return new CallableCoefsSetFetchDustinDB(this.dbPoolSourc, this,
 				this.executor, this.transformName, this.pageSize,
 				this.poolIdleTime, wavelengthId, paramId, statId);
 	}
@@ -158,21 +169,39 @@ public class ProjectFactory implements IProjectFactory {
 	}
 
 	@Override
+	public ICoefSet getCoefSet(int wavelenghtId, int paramId, int statId,
+			ICoefValues[] coefs) {
+		return new CoefSet(wavelenghtId, paramId, statId, coefs);
+	}
+
+	@Override
 	public FutureCallback<IWindowSet> getWindowRetrievalCallBack(
-			IWorkSupervisor supervisor) {
+			ITransformWorkSupervisor supervisor) {
 		return new WindowRetrievalCallBack(supervisor);
 	}
 
 	@Override
 	public FutureCallback<IWindowSet> getTransformCallBack(
-			IWorkSupervisor supervisor) {
+			ITransformWorkSupervisor supervisor) {
 		return new TransformCallback(supervisor);
 	}
 
 	@Override
 	public FutureCallback<Boolean> getSavedTransfromCallBack(
-			IWorkSupervisor supervisor) {
+			ITransformWorkSupervisor supervisor) {
 		return new TransformSavedCallback(supervisor);
+	}
+
+	@Override
+	public FutureCallback<ICoefSet> getCoefValuesRetreivalCallBack(
+			IFStatCalcWorkSupervisor supervisor) {
+		return new CoefsSetFetchCallback(supervisor);
+	}
+
+	@Override
+	public FutureCallback<Boolean> getSavedFStatValsCallBack(
+			IFStatCalcWorkSupervisor supervisor) {
+		return new FValuesSavedCallback(supervisor);
 	}
 
 	@Override
@@ -185,8 +214,19 @@ public class ProjectFactory implements IProjectFactory {
 	}
 
 	@Override
-	public WorkSupervisor getSuper() {
-		return new WorkSupervisor(this.executor, this.dbcon, this);
+	public TransformWorkSupervisor getTransformSuper() {
+		return new TransformWorkSupervisor(this.executor, this.dbcon, this);
+	}
+
+	@Override
+	public IFStatCalcWorkSupervisor getFStatCalcSuper() {
+		return new FStatCalcWorkSupervisor(this.executor, this,
+				this.wavelengths, this.params, this.stats);
+	}
+
+	@Override
+	public IFTestCalc getFValCalculator() {
+		return new FTestCalc();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////
@@ -283,6 +323,16 @@ public class ProjectFactory implements IProjectFactory {
 					this.params = new int[parmMax - parmMin + 1];
 					for (int k = parmMin; k <= parmMax; k++) {
 						this.params[k - parmMin] = k;
+					}
+					break;
+				case "statsrange":
+					String statsMinStr = this.getAttrib(nde, "min");
+					String statsMaxStr = this.getAttrib(nde, "max");
+					int statMin = Integer.parseInt(statsMinStr);
+					int statMax = Integer.parseInt(statsMaxStr);
+					this.stats = new int[statMax - statMin + 1];
+					for (int k = statMin; k <= statMax; k++) {
+						this.stats[k - statMin] = k;
 					}
 					break;
 				case "transform":

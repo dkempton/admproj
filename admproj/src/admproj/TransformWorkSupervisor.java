@@ -9,7 +9,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import admproj.interfaces.IProjectFactory;
-import admproj.interfaces.IWorkSupervisor;
+import admproj.interfaces.ITransformWorkSupervisor;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFutureTask;
@@ -20,7 +20,7 @@ import dbconnect.interfaces.IDbCon;
 import dbconnect.interfaces.IDbWindowSetResults;
 import exceptions.DbConException;
 
-public class WorkSupervisor implements IWorkSupervisor {
+public class TransformWorkSupervisor implements ITransformWorkSupervisor {
 	ListeningExecutorService executor;
 	IProjectFactory factory;
 	IDbCon dbcon;
@@ -34,7 +34,7 @@ public class WorkSupervisor implements IWorkSupervisor {
 	Condition doneProcessing;
 	boolean doneFetching = false;
 
-	public WorkSupervisor(ListeningExecutorService executor, IDbCon dbcon,
+	public TransformWorkSupervisor(ListeningExecutorService executor, IDbCon dbcon,
 			IProjectFactory factory) {
 		if (executor == null)
 			throw new IllegalArgumentException(

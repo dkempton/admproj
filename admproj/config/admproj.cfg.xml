@@ -6,13 +6,14 @@
 	<minpool value="2" />
 	<maxpool value="10" />
 	<maxsize value="40" />
-	<username value="admuser" />
-	<password value="admuser" />
+	<username value="user" />
+	<password value="user" />
 	<validationquery value="Do 1;" />
 	<driverclass value="com.mysql.jdbc.Driver" />
-	<url value="jdbc:mysql://dkempton1.ddns.net:1034/dmdata" />
+	<url value="jdbc:mysql://localhost:3306/dmdata" />
 	<pagesize value="1000" />
 	<wavelengthrange min="1" max="9" />
 	<paramrange min="1" max="10" />
-	<transform name="DCT" />
+	<statsrange min="1" max="5" />
+	<transform name="HAAR" />
 </configfile>

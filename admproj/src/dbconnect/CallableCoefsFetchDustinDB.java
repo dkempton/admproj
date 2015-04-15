@@ -40,7 +40,7 @@ public class CallableCoefsFetchDustinDB implements Callable<ICoefValues> {
 		this.factory = factory;
 
 		coefQuery = "SELECT ";
-		coefQuery += statNames[statId];
+		coefQuery += statNames[statId - 1];
 		coefQuery += "_coef FROM dmdata." + table + "_transform_coefs where "
 				+ "wavelength_id = ? and param_id = ? and window_id = ? "
 				+ "ORDER BY coef_num;";
