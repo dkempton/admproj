@@ -1,0 +1,21 @@
+package transformTests;
+
+public class TestTransformResults {
+
+	public void testConstructorThrowsOnZeroDataSet() {
+
+	}
+
+	public void testConstructorThrowsOnNullDataSet() {
+
+	}
+
+	public void testConstructorThrowsOnNullSelector() {
+
+	}
+
+	public void testConstructorThrowsOnUnevenDataset() {
+
+	}
+
+}

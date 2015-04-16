@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="datatypes.interfaces.IPoint"/>
+<fullyQualifiedTypeName name="classifier.interfaces.IClassifier"/>
+<fullyQualifiedTypeName name="classifier.interfaces.IDataSelection"/>
+<fullyQualifiedTypeName name="datatypes.DataSet"/>
+<fullyQualifiedTypeName name="java.util.Vector"/>
+<fullyQualifiedTypeName name="java.util.Collections"/>
+<fullyQualifiedTypeName name="datatypes.interfaces.IDataSet"/>
+<fullyQualifiedTypeName name="libsvm.svm_problem"/>
+<fullyQualifiedTypeName name="libsvm.svm"/>
+<fullyQualifiedTypeName name="libsvm.svm_model"/>
+<fullyQualifiedTypeName name="libsvm.svm_parameter"/>
+<fullyQualifiedTypeName name="dataselection.interfaces.IDataSelection"/>
+<fullyQualifiedTypeName name="dataselection.BasicSelection"/>
+<fullyQualifiedTypeName name="java.lang.Override"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="org.hamcrest.CoreMatchers"/>
+<fullyQualifiedTypeName name="classifier.SVMClassifier"/>
+<fullyQualifiedTypeName name="libsvm.svm_node"/>
+</qualifiedTypeNameHistroy>

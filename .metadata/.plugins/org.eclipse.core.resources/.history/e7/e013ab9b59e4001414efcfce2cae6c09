@@ -1,0 +1,36 @@
+package classifierTests;
+
+public class TestSvmClassifier {
+	public void testConstructorThrowsOnZeroDataSet() {
+
+	}
+
+	public void testConstructorThrowsOnNullDataSet() {
+
+	}
+
+	public void testConstructorThrowsOnNullSelector() {
+
+	}
+
+	public void testConstructorThrowsOnUnevenDataset() {
+
+	}
+	
+	public void testTrainThrowsOnZeroDataSet() {
+
+	}
+
+	public void testTrainThrowsOnNullDataSet() {
+
+	}
+	
+	public void testEvaluateThrowsOnZeroDataSet() {
+
+	}
+
+	public void testEvaluateThrowsOnNullDataSet() {
+
+	}
+	
+}
