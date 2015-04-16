@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="TestSvmClassifier" project="admproj" tests="11" started="11" failures="1" errors="0" ignored="0">
+  <testsuite name="classifierTests.TestSvmClassifier" time="0.0">
+    <testcase name="testConstructorThrowsOnUnevenDataset" classname="classifierTests.TestSvmClassifier" time="0.0">
+      <failure>java.lang.AssertionError: Expected exception: java.lang.IllegalArgumentException
+	at org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:32)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:675)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)
+
+</failure>
+    </testcase>
+    <testcase name="testAddTestingDataThrowsOnZeroWidthDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testConstructorThrowsOnZeroWidthDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testConstructorThrowsOnNullSelector" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testConstructorThrowsOnNullDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testConstructorThrowsOnZeroLengthDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testAddTestingDataThrowsOnZeroLengthDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testAddTrainingDataThrowsOnZeroWidthDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testAddTestingDataThrowsOnNullDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testAddTrainingDataThrowsOnNullDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testAddTrainingDataThrowsOnZeroLengthDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+  </testsuite>
+</testrun>
