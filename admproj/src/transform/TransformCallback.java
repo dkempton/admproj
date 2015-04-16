@@ -1,6 +1,12 @@
 package transform;
 
+<<<<<<< Updated upstream
 import admproj.interfaces.ITransformWorkSupervisor;
+=======
+import java.util.concurrent.FutureTask;
+
+import admproj.interfaces.IProjectFactory;
+>>>>>>> Stashed changes
 
 import com.google.common.util.concurrent.FutureCallback;
 
