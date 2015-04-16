@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="TestCallableWindowFetch" project="admproj" tests="5" started="5" failures="0" errors="0" ignored="0">
-  <testsuite name="dbConnectTests.TestCallableWindowFetch" time="0.4">
-    <testcase name="testCallS" classname="dbConnectTests.TestCallableWindowFetch" time="0.398"/>
-    <testcase name="testConstructorThrowsOnNullParams" classname="dbConnectTests.TestCallableWindowFetch" time="0.001"/>
-    <testcase name="testConstructorThrowsOnNullDataSource" classname="dbConnectTests.TestCallableWindowFetch" time="0.0"/>
-    <testcase name="testConstructorThrowsOnNullFactory" classname="dbConnectTests.TestCallableWindowFetch" time="0.0"/>
-    <testcase name="testConstructorThrowsOnNullWavelenghts" classname="dbConnectTests.TestCallableWindowFetch" time="0.001"/>
-  </testsuite>
-</testrun>
