@@ -1,11 +1,11 @@
 package classifier;
 
+import classifier.interfaces.IClassifier;
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
-import classifier.interfaces.IClassifier;
 import dataselection.BasicSelection;
 import dataselection.interfaces.IDataSelection;
 
@@ -17,7 +17,7 @@ import dataselection.interfaces.IDataSelection;
  *         and testing sets is the class label.
  * 
  */
-public class SVMClassifier {
+public class SVMClassifier implements IClassifier {
 
 	private svm_parameter params;
 	private svm_model model;
@@ -49,6 +49,7 @@ public class SVMClassifier {
 	 */
 	public void train(double[][] trainingData) {
 		testMatrix(trainingData);
+		System.out.println("Training: ");
 		// Training portion - unpacking the training data and
 		// reloads it into the format needed for svm to work
 		svm_problem problem = new svm_problem();
@@ -69,6 +70,7 @@ public class SVMClassifier {
 		}
 		// Training the svm
 		model = svm.svm_train(problem, params);
+		System.out.println("\n\n");
 	}
 
 	/**
@@ -77,6 +79,7 @@ public class SVMClassifier {
 	 */
 	public void evaluate(double[][] testingData) {
 		testMatrix(testingData);
+		System.out.println("Testing: ");
 		double correctPredictions = 0, falsePredictions = 0;
 		for (double[] features : testingData) {
 			// Unpacking and repacking the data for testing

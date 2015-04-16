@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="TestSvmClassifier" project="admproj" tests="5" started="5" failures="0" errors="0" ignored="0">
+  <testsuite name="classifierTests.TestSvmClassifier" time="0.005">
+    <testcase name="testTrainThrowsOnZeroLengthDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testTrainingAndEvaluation" classname="classifierTests.TestSvmClassifier" time="0.004"/>
+    <testcase name="testTrainThrowsOnZeroWidthDataSet" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+    <testcase name="testTrainThrowsOnNullDataSet" classname="classifierTests.TestSvmClassifier" time="0.001"/>
+    <testcase name="testTrainThrowsOnUnevenDataset" classname="classifierTests.TestSvmClassifier" time="0.0"/>
+  </testsuite>
+</testrun>

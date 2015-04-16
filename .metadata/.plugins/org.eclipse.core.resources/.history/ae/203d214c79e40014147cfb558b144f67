@@ -1,0 +1,8 @@
+package classifier.interfaces;
+
+public interface IClassifier {
+		
+	public void train(double [][] training);
+	public void evaluate();
+
+}
