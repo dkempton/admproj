@@ -1,0 +1,22 @@
+package dataSelectionTests;
+
+import org.junit.Test;
+
+import dataselection.BasicSelection;
+
+public class TestBasicDataSelection {
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorThrowsOnNull() {
+		new BasicSelection(null);
+	}
+	
+	
+	public void testSizeOfTrainingData(){
+		
+	}
+	
+public void testSizeOfTrainingData(){
+		
+	}
+}

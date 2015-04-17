@@ -1,11 +1,11 @@
 package classifier;
 
+import classifier.interfaces.IClassifier;
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
-import classifier.interfaces.IClassifier;
 import dataselection.BasicSelection;
 import dataselection.interfaces.IDataSelection;
 
@@ -19,41 +19,9 @@ import dataselection.interfaces.IDataSelection;
  */
 public class SVMClassifier implements IClassifier {
 
-	private double[][] trainingData;
-	private double[][] testingData;
 	private svm_parameter params;
 	private svm_model model;
-	private int width = -1;
 
-	public SVMClassifier(double[][] dataset, IDataSelection selector,
-			svm_parameter params) {
-		assert dataset.length > 0 && dataset != null : "Dataset must contain data";
-		int width = dataset[0].length;
-		assert width > 1 : "Width must be greater than one";
-		for (double[] featureVector : dataset) {
-			assert featureVector.length == width : "Feature vectors are not all of the same size";
-		}
-		if (params == null) {
-			congifureParams();
-		}
-		trainingData = selector.getTrainingData()[0];
-		testingData = selector.getTestingData()[0];
-		this.params = params;
-	}
-
-	public SVMClassifier(double[][] dataset, IDataSelection selector) {
-		this(dataset, selector, null);
-	}
-
-	public SVMClassifier(double[][] dataset, svm_parameter params) {
-		this(dataset, new BasicSelection(), params);
-	}
-
-	public SVMClassifier(double[][] dataset) {
-		this(dataset, new BasicSelection(), null);
-	}
-	
-	
 	public SVMClassifier(svm_parameter params) {
 		this.params = params;
 	}
@@ -73,9 +41,15 @@ public class SVMClassifier implements IClassifier {
 		params.cache_size = 200000;
 		params.eps = .002;
 	}
-
-	@Override
-	public void train() {
+	
+	/**
+	 * Performs exactly as the above method except it
+	 * uses the training data given instead what has been 
+	 * stored in the class. 
+	 */
+	public void train(double[][] trainingData) {
+		testMatrix(trainingData);
+		System.out.println("Training: ");
 		// Training portion - unpacking the training data and
 		// reloads it into the format needed for svm to work
 		svm_problem problem = new svm_problem();
@@ -96,13 +70,16 @@ public class SVMClassifier implements IClassifier {
 		}
 		// Training the svm
 		model = svm.svm_train(problem, params);
+		System.out.println("\n\n");
 	}
 
 	/**
 	 * For every element in the testing set get the predicted classification and
 	 * adds to the correct or false count. Prints out the averages at the end
 	 */
-	public void evaluate() {
+	public void evaluate(double[][] testingData) {
+		testMatrix(testingData);
+		System.out.println("Testing: ");
 		double correctPredictions = 0, falsePredictions = 0;
 		for (double[] features : testingData) {
 			// Unpacking and repacking the data for testing
@@ -124,28 +101,23 @@ public class SVMClassifier implements IClassifier {
 		System.out.println("Percentage Correct: " + avgCorrect);
 		System.out.println("Percentage False: " + avgFalse);
 	}
-
-	public void addTrainingData(double[][] trainingData) {
-		assert trainingData.length > 0 && trainingData != null : "Dataset must contain data";
-		if (width == -1){
-			width = trainingData[0].length;
-			assert width > 1 : "Width must be greater than one";
+	
+	/*
+	 * Test to see if the input matrix contains enough data for the svm to function. 
+	 */
+	private void testMatrix(double[][] matrix) throws IllegalArgumentException {
+		if (matrix == null) {
+			throw new IllegalArgumentException("Dataset cannot be null");
 		}
-		for (double[] featureVector : trainingData) {
-			assert featureVector.length == width : "Feature vectors are not all of the same size";
+		if (matrix.length < 1)
+			throw new IllegalArgumentException("Dataset must contain data");
+		int width = matrix[0].length;
+		if (width <= 1)
+			throw new IllegalArgumentException("Width must be greater than one");
+		for (double[] featureVector : matrix) {
+			if (featureVector.length != width)
+				throw new IllegalArgumentException(
+						"Feature vectors are not all of the same size");
 		}
-		this.trainingData = trainingData;
-	}
-
-	public void addTestingData(double[][] testingData) {
-		assert trainingData.length > 0 && trainingData != null : "Dataset must contain data";
-		if (width == -1){
-			width = trainingData[0].length;
-			assert width > 1 : "Width must be greater than one";
-		}
-		for (double[] featureVector : trainingData) {
-			assert featureVector.length == width : "Feature vectors are not all of the same size";
-		}
-		this.testingData = testingData;
 	}
 }
