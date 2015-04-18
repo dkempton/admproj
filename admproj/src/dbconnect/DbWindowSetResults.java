@@ -7,10 +7,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.*;
 import java.sql.*;
-
 import javax.sql.DataSource;
-
-import com.google.common.util.concurrent.ListenableFutureTask;
 
 import datatypes.interfaces.IWindowSet;
 import dbconnect.interfaces.IDbWindowSetResults;

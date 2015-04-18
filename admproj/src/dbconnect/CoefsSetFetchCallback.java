@@ -5,7 +5,6 @@ import admproj.interfaces.IFStatCalcWorkSupervisor;
 import com.google.common.util.concurrent.FutureCallback;
 
 import datatypes.interfaces.ICoefSet;
-import datatypes.interfaces.ICoefValues;
 
 public class CoefsSetFetchCallback implements FutureCallback<ICoefSet> {
 	IFStatCalcWorkSupervisor supervisor;

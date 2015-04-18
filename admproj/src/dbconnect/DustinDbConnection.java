@@ -5,12 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.concurrent.FutureTask;
 
 import javax.sql.DataSource;
 
 import admproj.interfaces.IProjectFactory;
-import datatypes.interfaces.IWindowSet;
 import dbconnect.interfaces.IDbCon;
 import dbconnect.interfaces.IDbWindowSetResults;
 

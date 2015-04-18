@@ -5,11 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.sql.DataSource;
@@ -110,7 +106,9 @@ public class CallableSVMTrainTestAndSaveDustinDb implements Callable<Boolean> {
 	}
 
 	private double[][] getArrysFromMap(int setIdx) {
-		Map<Integer, LinkedList<double[]>> trainingClsMap = this
+
+		// get a map of the classes.
+		ArrayList<LinkedList<double[]>> trainingClsMap = this
 				.getCoefficientMap(setIdx);
 		// keep track of where the classes end
 		ArrayList<Integer> clsEndNum = new ArrayList<Integer>();
@@ -124,39 +122,62 @@ public class CallableSVMTrainTestAndSaveDustinDb implements Callable<Boolean> {
 
 		// place the values into a 2d array to pass to the SVM where the first
 		// value is the class label.
-		double[][] input = new double[count][this.kCount + 1];
-		Collection<LinkedList<double[]>> clsCollect = trainingClsMap.values();
-		Iterator<LinkedList<double[]>> itr = clsCollect.iterator();
-		int lastClass = -1;
-		while (itr.hasNext()) {
+		double[][] returnArry = new double[count][this.kCount + 1];
+
+		for (int i = 0; i < trainingClsMap.size(); i++) {
+
+			// if we are processing the class after the first one
+			// we need to offset where in the return array we are
+			// inserting the time series we are processing
 			int startIdx = 0;
-			if (lastClass >= 0) {
-				startIdx = clsEndNum.get(lastClass);
+			if (i > 0) {
+				startIdx = clsEndNum.get(i - 1);
 			}
 
 			// the set of values for the class we are currently processing
-			LinkedList<double[]> prmList = itr.next();
+			LinkedList<double[]> prmList = trainingClsMap.get(i);
+
+			// for each of the time series in this class
 			for (int k = 0; k < prmList.size(); k++) {
+
+				// get a time series to process
 				double[] prmVals = prmList.get(k);
+
+				// loop through and put its values into the return array
 				for (int p = 0; p < prmVals.length; p++) {
+
+					// if the first one column
 					if (k == 0) {
-						input[p + startIdx][0] = lastClass + 1;
-						input[p + startIdx][1] = prmVals[p];
+						returnArry[p + startIdx][0] = i;
+						returnArry[p + startIdx][1] = prmVals[p];
 					} else {
-						input[p + startIdx][k + 1] = prmVals[p];
+						returnArry[p + startIdx][k + 1] = prmVals[p];
 					}
 				}
 			}
-			lastClass++;
+
 		}
-		return input;
+		return returnArry;
 	}
 
-	private Map<Integer, LinkedList<double[]>> getCoefficientMap(int setIdx) {
+	private ArrayList<LinkedList<double[]>> getCoefficientMap(int setIdx) {
 
 		Connection con = null;
-		Map<Integer, LinkedList<double[]>> trainingClsMap = new HashMap<Integer, LinkedList<double[]>>();
+
+		// create a map to place the different classes in.
+		// the set of coefficients are stored in the arrays in the linked list
+		// each array represents one coefficient of all the time series in the
+		// class
+		ArrayList<LinkedList<double[]>> trainingClsMap = new ArrayList<LinkedList<double[]>>();
+		for (int i = 0; i < this.seperatedIds.size(); i++) {
+			trainingClsMap.add(new LinkedList<double[]>());
+		}
+
 		try {
+
+			// select the top k coefficients to pull from the database based on
+			// what is in the
+			// table of f-statistics
 			String topKQuery = "SELECT wavelength_id, param_id, coef_num, stat_id FROM "
 					+ this.table.toLowerCase()
 					+ "_f_vals ORDER BY f_val DESC LIMIT ?";
@@ -177,16 +198,8 @@ public class CallableSVMTrainTestAndSaveDustinDb implements Callable<Boolean> {
 					double[] vals = this.getCoefVals(con, ids, rs.getInt(1),
 							rs.getInt(2), rs.getInt(3), rs.getInt(4));
 
-					Object clsListObj = trainingClsMap.get(i);
-					if (clsListObj == null) {
-						LinkedList<double[]> clsArrayList = new LinkedList<double[]>();
-						clsArrayList.add(vals);
-						trainingClsMap.put(i, clsArrayList);
-					} else {
-						@SuppressWarnings("unchecked")
-						LinkedList<double[]> clsArrayList = (LinkedList<double[]>) clsListObj;
-						clsArrayList.add(vals);
-					}
+					LinkedList<double[]> lst = trainingClsMap.get(i);
+					lst.add(vals);
 				}
 			}
 
@@ -210,20 +223,15 @@ public class CallableSVMTrainTestAndSaveDustinDb implements Callable<Boolean> {
 			int wavelength_id, int param_id, int coef_num, int stat_id) {
 		double[] returnVals = new double[ids.size()];
 		int currentIdx = 0;
-		while (currentIdx < ids.size()) {
+		for (; currentIdx < ids.size(); currentIdx++) {
 			try {
 				StringBuilder sb = new StringBuilder("SELECT ");
 				sb.append(this.statNames[stat_id - 1]);
 				sb.append("_coef FROM ");
 				sb.append(this.table);
-				sb.append("_transform_coefs WHERE window_id IN (");
-				int i = 0;
-				for (; i < 100 && (i + currentIdx) < (ids.size() - 1); i++) {
-					sb.append(ids.get(i + currentIdx));
-					sb.append(", ");
-				}
-				sb.append(ids.get(i + currentIdx));
-				sb.append(") AND coef_num =? AND wavelength_id=? AND param_id=?;");
+				sb.append("_transform_coefs WHERE window_id = ");
+				sb.append(ids.get(currentIdx));
+				sb.append(" AND coef_num =? AND wavelength_id=? AND param_id=?;");
 				String qry = sb.toString();
 				PreparedStatement getTopKStmt = con.prepareStatement(qry);
 				getTopKStmt.setInt(1, coef_num);
@@ -232,8 +240,8 @@ public class CallableSVMTrainTestAndSaveDustinDb implements Callable<Boolean> {
 
 				ResultSet rs = getTopKStmt.executeQuery();
 
-				while (rs.next()) {
-					returnVals[currentIdx++] = rs.getDouble(1);
+				if (rs.next()) {
+					returnVals[currentIdx] = rs.getDouble(1);
 				}
 
 			} catch (SQLException e) {

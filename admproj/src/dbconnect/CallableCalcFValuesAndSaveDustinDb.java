@@ -2,7 +2,6 @@ package dbconnect;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
 import javax.sql.DataSource;
@@ -73,7 +72,7 @@ public class CallableCalcFValuesAndSaveDustinDb implements Callable<Boolean> {
 				saveFValsStmt.setInt(1, this.wavelengthId);
 				saveFValsStmt.setInt(2, this.paramId);
 				saveFValsStmt.setInt(3, this.statId);
-				saveFValsStmt.setInt(4, i);
+				saveFValsStmt.setInt(4, i + 1);
 				saveFValsStmt.setDouble(5, fVals[i]);
 				saveFValsStmt.addBatch();
 			}

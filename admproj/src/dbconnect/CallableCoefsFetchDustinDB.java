@@ -3,7 +3,6 @@ package dbconnect;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
@@ -95,7 +94,7 @@ public class CallableCoefsFetchDustinDB implements Callable<ICoefValues> {
 				}
 			}
 		}
-		
+
 		ICoefValues vals = this.factory.getCoefVals(this.classId, coefsArr);
 		return vals;
 	}
