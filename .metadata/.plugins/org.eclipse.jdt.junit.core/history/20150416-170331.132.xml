@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="TestParamSet" project="admproj" tests="5" started="5" failures="0" errors="0" ignored="0">
-  <testsuite name="dataTypesTests.TestParamSet" time="0.0">
-    <testcase name="testGetStatSet" classname="dataTypesTests.TestParamSet" time="0.0"/>
-    <testcase name="testSize" classname="dataTypesTests.TestParamSet" time="0.0"/>
-    <testcase name="testConstructorThrowsOnNull" classname="dataTypesTests.TestParamSet" time="0.0"/>
-    <testcase name="testGetParamId" classname="dataTypesTests.TestParamSet" time="0.0"/>
-    <testcase name="testGetAllStatSets" classname="dataTypesTests.TestParamSet" time="0.0"/>
-  </testsuite>
-</testrun>
