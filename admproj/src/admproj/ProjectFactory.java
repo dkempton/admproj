@@ -2,6 +2,7 @@ package admproj;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 
@@ -16,10 +17,14 @@ import exceptions.InvalidConfigException;
 
 import org.w3c.dom.*;
 
+import classifier.SVMClassifier;
+import classifier.interfaces.IClassifier;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import admproj.interfaces.IClassifierWorkSupervisor;
 import admproj.interfaces.IFStatCalcWorkSupervisor;
 import admproj.interfaces.IProjectFactory;
 import admproj.interfaces.ITransformWorkSupervisor;
@@ -85,13 +90,26 @@ public class ProjectFactory implements IProjectFactory {
 		}
 
 		if (this.dbcon == null) {
-			this.dbcon = new DbConnection(this);
+			this.dbcon = new DustinDbConnection(this.dbPoolSourc, this,
+					this.transformName.toLowerCase());
 		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		this.dbPoolSourc.release();
+		this.executor.shutdown();
 	}
 
 	@Override
 	public IDbCon getDbCon() {
 		return this.dbcon;
+	}
+
+	@Override
+	public IClassifier getClassifier(int kernelId) {
+		return new SVMClassifier(kernelId);
 	}
 
 	@Override
@@ -119,6 +137,14 @@ public class ProjectFactory implements IProjectFactory {
 		return new CallableCalcFValuesAndSaveDustinDb(this.dbPoolSourc, this,
 				this.transformName.toLowerCase(), coefSet.getWavelengthId(),
 				coefSet.getParamId(), coefSet.getStatId(), coefSet.getCoefs());
+	}
+
+	@Override
+	public Callable<Boolean> getSVMTrainTestAndSaveCallabel(
+			ArrayList<ArrayList<ArrayList<Integer>>> seperatedIds, int kCount,
+			int kernel) {
+		return new CallableSVMTrainTestAndSaveDustinDb(this.dbPoolSourc, this,
+				this.transformName.toLowerCase(), seperatedIds, kCount, kernel);
 	}
 
 	@Override
@@ -217,6 +243,11 @@ public class ProjectFactory implements IProjectFactory {
 	public IFStatCalcWorkSupervisor getFStatCalcSuper() {
 		return new FStatCalcWorkSupervisor(this.executor, this,
 				this.wavelengths, this.params, this.stats);
+	}
+
+	@Override
+	public IClassifierWorkSupervisor getClassifierSuper() {
+		return new SVMClassifierWorkSupervisor(this.executor, this.dbcon, this);
 	}
 
 	@Override

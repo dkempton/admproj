@@ -69,7 +69,8 @@ public class CallableCoefsSetFetchDustinDB implements Callable<ICoefSet>,
 			throw new IllegalArgumentException(
 					"ListeningExecutorService cannot be null in CallableCoefsArrFetch constructor.");
 
-		this.idQury = "SELECT window_id, class_id FROM dmdata.combined_windows_ids LIMIT ?,?;";
+		this.idQury = "SELECT window_id, class_id FROM dmdata."
+				+ table.toLowerCase() + "_window_ids LIMIT ?,?;";
 
 		this.dsourc = dsourc;
 		this.factory = factory;

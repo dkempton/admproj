@@ -4,10 +4,12 @@
 package admproj.interfaces;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 import utils.interfaces.IFTestCalc;
 import admproj.TransformWorkSupervisor;
+import classifier.interfaces.IClassifier;
 
 import com.google.common.util.concurrent.FutureCallback;
 
@@ -26,6 +28,8 @@ import dbconnect.interfaces.IDbWindowSetResults;
  */
 public interface IProjectFactory {
 	public IDbCon getDbCon();
+
+	public IClassifier getClassifier( int kernelId);
 
 	public IDbWindowSetResults getWindowResultSet() throws SQLException,
 			InterruptedException;
@@ -49,6 +53,10 @@ public interface IProjectFactory {
 	public Callable<Boolean> getTransformSaveCallable(IWindowSet transformedSet);
 
 	public Callable<Boolean> getCalcFValsAndSaveCallable(ICoefSet coefSet);
+
+	public Callable<Boolean> getSVMTrainTestAndSaveCallabel(
+			ArrayList<ArrayList<ArrayList<Integer>>> seperatedIds, int kCount,
+			int kernel);
 
 	public Callable<IWindowSet> getTransformWinSetCallable(IWindowSet inputSet);
 
@@ -74,8 +82,10 @@ public interface IProjectFactory {
 			IFStatCalcWorkSupervisor supervisor);
 
 	public TransformWorkSupervisor getTransformSuper();
-	
+
 	public IFStatCalcWorkSupervisor getFStatCalcSuper();
+	
+	public IClassifierWorkSupervisor getClassifierSuper();
 
 	public IFTestCalc getFValCalculator();
 }

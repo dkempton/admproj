@@ -86,18 +86,29 @@ public class CallableTransfromSaveDustinDb implements Callable<Boolean> {
 			// insert batch and commit
 			saveParamsStmt.executeBatch();
 			con.commit();
-			con.close();
+
+			// insert into window_ids table too
+			String insWinString = "INSERT INTO "
+					+ this.transformTablePrefix.toLowerCase()
+					+ "_window_ids VALUES(?,?);";
+			PreparedStatement saveParamsStmt2 = con
+					.prepareStatement(insWinString);
+			saveParamsStmt2.setInt(1, this.transformedSet.getWindowId());
+			saveParamsStmt2.setInt(2, this.transformedSet.memberOfClass());
+			saveParamsStmt2.executeUpdate();
+			con.commit();
 
 		} catch (Exception e) {
 
+			System.out.println(e.getMessage());
+			throw new Exception(e.getMessage());
+		} finally {
 			if (con != null) {
 				try {
 					con.close();
 				} catch (SQLException e1) {
 				}
 			}
-			System.out.println(e.getMessage());
-			throw new Exception(e.getMessage());
 		}
 
 		// if all went well we can return true.

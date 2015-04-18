@@ -152,7 +152,7 @@ public class FStatCalcWorkSupervisor implements IFStatCalcWorkSupervisor {
 	private void createRetrievalTask(int wavelengthId, int paramId, int statId) {
 		this.lock.lock();
 		try {
-			while (this.fetchTaskList.size() == MAX_FETCH
+			while (this.fetchTaskList.size() >= MAX_FETCH
 					|| this.saveFStatTaskList.size() >= MAX_FETCH) {
 				notFull.await();
 			}

@@ -26,6 +26,11 @@ public class SVMClassifier implements IClassifier {
 		this.params = params;
 	}
 
+	public SVMClassifier(int kernelType) {
+		this.congifureParams();
+		params.kernel_type = kernelType;
+	}
+
 	public SVMClassifier() {
 		congifureParams();
 	}
@@ -41,14 +46,13 @@ public class SVMClassifier implements IClassifier {
 		params.cache_size = 200000;
 		params.eps = .002;
 	}
-	
+
 	/**
-	 * Performs exactly as the above method except it
-	 * uses the training data given instead what has been 
-	 * stored in the class. 
+	 * Performs exactly as the above method except it uses the training data
+	 * given instead what has been stored in the class.
 	 */
 	public void train(double[][] trainingData) {
-		testMatrix(trainingData);
+		this.testMatrix(trainingData);
 		System.out.println("Training: ");
 		// Training portion - unpacking the training data and
 		// reloads it into the format needed for svm to work
@@ -69,7 +73,7 @@ public class SVMClassifier implements IClassifier {
 			problem.y[i] = features[0];
 		}
 		// Training the svm
-		model = svm.svm_train(problem, params);
+		this.model = svm.svm_train(problem, params);
 		System.out.println("\n\n");
 	}
 
@@ -77,8 +81,8 @@ public class SVMClassifier implements IClassifier {
 	 * For every element in the testing set get the predicted classification and
 	 * adds to the correct or false count. Prints out the averages at the end
 	 */
-	public void evaluate(double[][] testingData) {
-		testMatrix(testingData);
+	public double[] evaluate(double[][] testingData) {
+		this.testMatrix(testingData);
 		System.out.println("Testing: ");
 		double correctPredictions = 0, falsePredictions = 0;
 		for (double[] features : testingData) {
@@ -90,7 +94,7 @@ public class SVMClassifier implements IClassifier {
 				node.value = features[i];
 				nodes[i - 1] = node;
 			}
-			double predicted = svm.svm_predict(model, nodes);
+			double predicted = svm.svm_predict(this.model, nodes);
 			correctPredictions += (features[0] == predicted) ? 1 : 0;
 			falsePredictions += (features[0] != predicted) ? 1 : 0;
 		}
@@ -100,10 +104,13 @@ public class SVMClassifier implements IClassifier {
 				/ (correctPredictions + falsePredictions);
 		System.out.println("Percentage Correct: " + avgCorrect);
 		System.out.println("Percentage False: " + avgFalse);
+		double[] returnValues = { avgCorrect, avgFalse };
+		return returnValues;
 	}
-	
+
 	/*
-	 * Test to see if the input matrix contains enough data for the svm to function. 
+	 * Test to see if the input matrix contains enough data for the svm to
+	 * function.
 	 */
 	private void testMatrix(double[][] matrix) throws IllegalArgumentException {
 		if (matrix == null) {
