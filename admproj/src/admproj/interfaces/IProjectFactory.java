@@ -29,7 +29,7 @@ import dbconnect.interfaces.IDbWindowSetResults;
 public interface IProjectFactory {
 	public IDbCon getDbCon();
 
-	public IClassifier getClassifier( int kernelId);
+	public IClassifier getClassifier( int kernelId, int numFeatures);
 
 	public IDbWindowSetResults getWindowResultSet() throws SQLException,
 			InterruptedException;

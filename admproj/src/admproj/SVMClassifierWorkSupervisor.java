@@ -63,8 +63,8 @@ public class SVMClassifierWorkSupervisor implements IClassifierWorkSupervisor,
 	@Override
 	public void run() {
 		ArrayList<ArrayList<ArrayList<Integer>>> seperatedIds = this.getIds();
-		for (int i = 10; i < 10000; i++) {
-			for (int j = 0; j < 4; j++) {
+		for (int i = 10; i < 10000; i += 5) {
+			for (int j = 2; j < 3; j++) {
 				this.createClassifierTask(seperatedIds, i, j);
 			}
 		}
@@ -97,7 +97,6 @@ public class SVMClassifierWorkSupervisor implements IClassifierWorkSupervisor,
 					this.notFull.signal();
 				}
 			}
-			
 
 		} finally {
 			this.lock.unlock();
@@ -168,20 +167,20 @@ public class SVMClassifierWorkSupervisor implements IClassifierWorkSupervisor,
 			for (int j = 0; j < numForTrain; j++) {
 				int idx = rnd.nextInt(valList.size());
 				Integer numVal = valList.get(idx);
-				if(numVal!=null){
-				trainingSet.add(numVal);
-				}else{
+				if (numVal != null) {
+					trainingSet.add(numVal);
+				} else {
 					System.out.println("Null 1");
 				}
 				valList.remove(idx);
 			}
 
 			ArrayList<Integer> testSet = new ArrayList<Integer>();
-			while (!valList.isEmpty()) {
-				Integer intVal = valList.poll();
-				if(intVal!=null){
-				testSet.add(valList.poll());
-				}else{
+			for (int k = 0; k < valList.size(); k++) {
+				Integer intVal = valList.get(k);
+				if (intVal != null) {
+					testSet.add(intVal);
+				} else {
 					System.out.println("Null");
 				}
 			}

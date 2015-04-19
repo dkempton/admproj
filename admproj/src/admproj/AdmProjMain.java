@@ -3,20 +3,18 @@ package admproj;
 import admproj.interfaces.IClassifierWorkSupervisor;
 import admproj.interfaces.IFStatCalcWorkSupervisor;
 import admproj.interfaces.IProjectFactory;
-import dbconnect.interfaces.IDbCon;
 import exceptions.InvalidConfigException;
 
 public class AdmProjMain {
 
 	public static void main(String[] args) {
-		System.out.println("Hello!!!!!!");
 
 		try {
 			IProjectFactory fctry = new ProjectFactory();
-			TransformWorkSupervisor supervisor = fctry.getTransformSuper();
-			supervisor.run();
-			IFStatCalcWorkSupervisor supervisor2 = fctry.getFStatCalcSuper();
-			supervisor2.run();
+			// TransformWorkSupervisor supervisor = fctry.getTransformSuper();
+			// supervisor.run();
+			// IFStatCalcWorkSupervisor supervisor2 = fctry.getFStatCalcSuper();
+			// supervisor2.run();
 			IClassifierWorkSupervisor supervisor3 = fctry.getClassifierSuper();
 			supervisor3.run();
 

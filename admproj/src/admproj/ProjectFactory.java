@@ -3,8 +3,12 @@ package admproj;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,6 +70,9 @@ public class ProjectFactory implements IProjectFactory {
 	ListeningExecutorService executor = null;
 	IDbCon dbcon = null;
 
+	Map<String, double[]> rangeMap = null;
+	Lock lock = null;
+
 	public ProjectFactory() throws InvalidConfigException {
 		this.config();
 
@@ -93,6 +100,9 @@ public class ProjectFactory implements IProjectFactory {
 			this.dbcon = new DustinDbConnection(this.dbPoolSourc, this,
 					this.transformName.toLowerCase());
 		}
+
+		this.rangeMap = new HashMap<String, double[]>();
+		this.lock = new ReentrantLock();
 	}
 
 	@Override
@@ -108,8 +118,8 @@ public class ProjectFactory implements IProjectFactory {
 	}
 
 	@Override
-	public IClassifier getClassifier(int kernelId) {
-		return new SVMClassifier(kernelId);
+	public IClassifier getClassifier(int kernelId, int numFeatures) {
+		return new SVMClassifier(kernelId, numFeatures);
 	}
 
 	@Override
@@ -144,7 +154,8 @@ public class ProjectFactory implements IProjectFactory {
 			ArrayList<ArrayList<ArrayList<Integer>>> seperatedIds, int kCount,
 			int kernel) {
 		return new CallableSVMTrainTestAndSaveDustinDb(this.dbPoolSourc, this,
-				this.transformName.toLowerCase(), seperatedIds, kCount, kernel);
+				this.transformName.toLowerCase(), seperatedIds, this.rangeMap,
+				this.lock, kCount, kernel);
 	}
 
 	@Override
