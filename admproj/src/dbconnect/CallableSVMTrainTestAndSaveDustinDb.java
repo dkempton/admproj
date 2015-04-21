@@ -245,7 +245,11 @@ public class CallableSVMTrainTestAndSaveDustinDb implements Callable<Boolean> {
 
 					// if the first column
 					if (k == 0) {
-						returnArry[p + startIdx][0] = i;
+						if (i == 0) {
+							returnArry[p + startIdx][0] = -1;
+						} else {
+							returnArry[p + startIdx][0] = 1;
+						}
 						returnArry[p + startIdx][1] = prmVals[p];
 					} else {
 						returnArry[p + startIdx][k + 1] = prmVals[p];
