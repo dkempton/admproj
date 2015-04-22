@@ -82,6 +82,12 @@ public class SVMClassifier implements IClassifier {
 			problem.y[i] = features[0];
 		}
 		// Training the svm
+		String errmsg = svm.svm_check_parameter(problem, this.params);
+
+		if (errmsg != null) {
+			System.out.println("Error: " + errmsg);
+			System.exit(1);
+		}
 		this.model = svm.svm_train(problem, params);
 		System.out.println("\n\n");
 	}
@@ -99,12 +105,12 @@ public class SVMClassifier implements IClassifier {
 			svm_node[] nodes = new svm_node[features.length - 1];
 			for (int i = 1; i < features.length; i++) {
 				svm_node node = new svm_node();
-				node.index = 1;
+				node.index = i;
 				node.value = features[i];
 				nodes[i - 1] = node;
 			}
 			double predicted = svm.svm_predict(this.model, nodes);
-			//System.out.println("pred: " + predicted);
+			// System.out.println("pred: " + predicted);
 			correctPredictions += (features[0] == predicted) ? 1 : 0;
 			falsePredictions += (features[0] != predicted) ? 1 : 0;
 		}
