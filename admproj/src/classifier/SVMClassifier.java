@@ -29,7 +29,8 @@ public class SVMClassifier implements IClassifier {
 	public SVMClassifier(int kernelType, int numFeatures) {
 		this.congifureParams();
 		this.params.kernel_type = kernelType;
-		this.params.gamma = 1.0 / numFeatures;
+		System.out.println("Features: " + numFeatures);
+		// this.params.gamma = 1.0 / numFeatures;
 	}
 
 	public SVMClassifier() {
@@ -38,21 +39,21 @@ public class SVMClassifier implements IClassifier {
 
 	private void congifureParams() {
 		params = new svm_parameter();
-		params.probability = 0;
-		params.gamma = 0;
-		params.nu = 0.5;
+		params.probability = 1;
+		params.gamma = 0.5;
+		// params.nu = 0.5;
 		params.C = 1;
 		params.svm_type = svm_parameter.C_SVC;
 		params.kernel_type = svm_parameter.LINEAR;
-		params.cache_size = 200000;
-		params.eps = .0001;
-		params.p = 0.1;
+		params.cache_size = 80;
+		params.eps = .001;
+		// params.p = 0.1;
 		params.shrinking = 1;
 		params.degree = 3;
 		params.coef0 = 0;
-		params.nr_weight = 0;
-		params.weight_label = new int[0];
-		params.weight = new double[0];
+		// params.nr_weight = 2;
+		// params.weight_label = new int[] { 0, 1 };
+		// params.weight = new double[] { 1.0, 1.0 };
 
 	}
 
@@ -88,7 +89,7 @@ public class SVMClassifier implements IClassifier {
 			System.out.println("Error: " + errmsg);
 			System.exit(1);
 		}
-		this.model = svm.svm_train(problem, params);
+		this.model = svm.svm_train(problem, this.params);
 		System.out.println("\n\n");
 	}
 
@@ -100,7 +101,8 @@ public class SVMClassifier implements IClassifier {
 		this.testMatrix(testingData);
 		System.out.println("Testing: ");
 		double correctPredictions = 0, falsePredictions = 0;
-		for (double[] features : testingData) {
+		for (int m = 0; m < testingData.length; m++) {
+			double[] features = testingData[m];
 			// Unpacking and repacking the data for testing
 			svm_node[] nodes = new svm_node[features.length - 1];
 			for (int i = 1; i < features.length; i++) {
@@ -109,15 +111,19 @@ public class SVMClassifier implements IClassifier {
 				node.value = features[i];
 				nodes[i - 1] = node;
 			}
-			double predicted = svm.svm_predict(this.model, nodes);
+			double[] prob_est = new double[this.model.nr_class];
+			double predicted = svm.svm_predict_probability(this.model, nodes,
+					prob_est);
 			// System.out.println("pred: " + predicted);
 			correctPredictions += (features[0] == predicted) ? 1 : 0;
 			falsePredictions += (features[0] != predicted) ? 1 : 0;
+
 		}
 		double avgCorrect = correctPredictions
 				/ (correctPredictions + falsePredictions);
 		double avgFalse = falsePredictions
 				/ (correctPredictions + falsePredictions);
+
 		System.out.println("Percentage Correct: " + avgCorrect);
 		System.out.println("Percentage False: " + avgFalse);
 		double[] returnValues = { avgCorrect, avgFalse };

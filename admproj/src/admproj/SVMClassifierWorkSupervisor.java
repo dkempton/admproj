@@ -63,7 +63,7 @@ public class SVMClassifierWorkSupervisor implements IClassifierWorkSupervisor,
 	@Override
 	public void run() {
 		ArrayList<ArrayList<ArrayList<Integer>>> seperatedIds = this.getIds();
-		for (int i = 10; i < 10000; i += 5) {
+		for (int i = 305; i <= 500; i += 5) {
 			for (int j = 1; j < 4; j++) {
 				this.createClassifierTask(seperatedIds, i, j);
 			}

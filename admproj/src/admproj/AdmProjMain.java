@@ -23,6 +23,8 @@ public class AdmProjMain {
 			e.printStackTrace();
 		}
 		System.out.println("Done");
+
+		System.exit(0);
 		return;
 	}
 

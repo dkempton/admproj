@@ -245,18 +245,19 @@ public class CallableSVMTrainTestAndSaveDustinDb implements Callable<Boolean> {
 
 					// if the first column
 					if (k == 0) {
-						
-						//this only works for two classes
-						//if we have more we are going to have to do
-						//something else. Maybe case select, but we need
-						//to look into the classifier to see what it needs for 
-						//more than two classes.
+
+						// this only works for two classes
+						// if we have more we are going to have to do
+						// something else. Maybe case select, but we need
+						// to look into the classifier to see what it needs for
+						// more than two classes.
 						if (i == 0) {
-							returnArry[p + startIdx][0] = -1;
-						} else {
 							returnArry[p + startIdx][0] = 1;
+						} else {
+							returnArry[p + startIdx][0] = -1;
 						}
 						returnArry[p + startIdx][1] = prmVals[p];
+
 					} else {
 						returnArry[p + startIdx][k + 1] = prmVals[p];
 					}
